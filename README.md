@@ -27,8 +27,6 @@ It is an advanced Discord leveling bot made with Discord.js and MongoDB. It is e
 -   **TOKEN:** Your discord bot token. [Discord Developer Portal](https://discord.com/developers/applications).
 -   **MONGODB:** Link of your MongoDB database. [MongoDB](https://www.mongodb.com/).
 
-You can create a `.env` file on your local computer or add secrets in replit.
-
 #### ⚙ Customization
 
 You can find all necessary configurations in the [config.ts](src/config.ts) file. Make sure you change them correctly.
