@@ -2,7 +2,7 @@ import { Client, Collection } from "discord.js"
 import { readdirSync } from "fs"
 import { connect as mongoDBConnect } from "mongoose"
 import { bot_token, mongodb_url } from "../config"
-import { CommandType } from "../typings/Command"
+import { CommandType } from "../typings/commands"
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection()

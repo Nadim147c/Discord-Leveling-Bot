@@ -4,7 +4,7 @@ import { botPermissions, DEVs } from "../config"
 import { followUp, interactionReply } from "../functions/message/message"
 import { titleCase } from "../functions/string/titleCase"
 import { Event } from "../structures/Event"
-import { ExtendedCommand } from "../typings/Command"
+import { ExtendedCommand } from "../typings/commands"
 
 export default new Event("interactionCreate", async (interaction: ExtendedCommand) => {
     if (!interaction.isCommand()) return

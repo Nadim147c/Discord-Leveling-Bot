@@ -1,6 +1,6 @@
 import { ExtendedClient } from "../structures/Client"
 import { readdirSync } from "fs"
-import { CommandType } from "../typings/Command"
+import { CommandType } from "../typings/commands"
 
 export default (client: ExtendedClient) => {
     const filter = (file: string) => file.endsWith(".ts") || file.endsWith(".js")
