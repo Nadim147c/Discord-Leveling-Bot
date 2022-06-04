@@ -19,5 +19,5 @@ export default new Event("voiceStateUpdate", async (_, newState) => {
 
     const xp = ((currentTime - time) / 1000) * xpPerSecond
 
-    console.log({ time, currentTime, xp })
+    // console.log({ time, currentTime, xp })
 })

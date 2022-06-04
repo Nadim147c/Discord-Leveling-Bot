@@ -1,6 +1,6 @@
 import { Client, Collection } from "discord.js"
 import { readdirSync } from "fs"
-import { connect as mongoDBConnect } from "mongoose"
+import mongoose from "mongoose"
 import { bot_token, mongodb_url } from "../config"
 import { CommandType } from "../typings/commands"
 
@@ -15,8 +15,12 @@ export class ExtendedClient extends Client {
 
     async start() {
         await this.registerModules()
-        mongoDBConnect(mongodb_url)
-        this.login(bot_token).then(() => console.log(`${this.user.tag} is ready`))
+        this.connectToDatabase(mongodb_url)
+        this.login(bot_token).then(() => console.log(`Discord bot is online: ${this.user.username}`))
+    }
+
+    private async connectToDatabase(url: string) {
+        mongoose.connect(url).then(mongo => console.log(`Connected to MongoDB: ${mongo.modelNames().join(", ")}`))
     }
 
     async importFile(filePath: string) {

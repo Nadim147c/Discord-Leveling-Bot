@@ -4,10 +4,9 @@ import { followUp } from "../../functions/message/message"
 import { getLevelData } from "../../functions/levels/getData"
 import { LevelDataType } from "../../models/levels"
 import { getUserData } from "../../functions/userDB/getData"
-import { createCanvas, loadImage, registerFont } from "canvas"
+import { createCanvas, Image, loadImage, registerFont } from "canvas"
 import { getXp } from "../../functions/levels/level"
 import { fitCover } from "../../functions/canvas/fitImage"
-import { titleCase } from "../../functions/string/titleCase"
 import { numberFormatter } from "../../functions/string/numberFormatter"
 
 export default new Command({
@@ -22,7 +21,7 @@ export default new Command({
     ],
     aliases: ["level"],
     async run(command) {
-        let user = command.options.getUser("member") || command.user
+        let user = command.options.getUser("member") ?? command.user
 
         const levelData = (await getLevelData(user.id, command.guild.id, true).catch(console.error)) as LevelDataType
 
@@ -36,60 +35,68 @@ export default new Command({
         const currentToNextLevelXp = nextLevelXp - CurrentLevelXp
 
         const userData = await getUserData(user.id)
-        const defaultBackgroundColor = "#223"
-        const defaultColor = userData?.color || "#eee"
+
+        const accentColor = userData?.color?.accent || "#eee"
+        const secondaryColor = "#223"
+        const backgroundColor = userData?.color?.background || `#0f1925`
+        const strokeColor = userData?.color?.stroke || "#222"
 
         const canvas = createCanvas(1000, 250)
         const ctx = canvas.getContext("2d")
 
-        registerFont("assets/fonts/ARIAL.TTF", { family: "Arial" })
+        let x: number,
+            y: number,
+            h: number,
+            w: number,
+            l = 700
 
-        //
-        ctx.fillStyle = `#0f1925`
-        ctx.fillRect(0, 0, 1000, 250)
+        registerFont("assets/fonts/Rubik.ttf", { family: "Rubik" })
+
+        ctx.fillStyle = backgroundColor
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        const drawBackground = (banner: Image) => {
+            fitCover(canvas, ctx, banner)
+            let grd = ctx.createLinearGradient(0, canvas.height, canvas.width, 0)
+            grd.addColorStop(0, secondaryColor)
+            grd.addColorStop(1, "#0000")
+            ctx.fillStyle = grd
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
 
         // Banner
-        if (userData?.banner)
-            await loadImage(userData.banner)
-                .then(async banner => {
-                    fitCover(canvas, ctx, banner)
-                    let grd = ctx.createLinearGradient(0, 250, 1000, 0)
-                    grd.addColorStop(0, defaultBackgroundColor)
-                    grd.addColorStop(1, "#0000")
-                    ctx.fillStyle = grd
-                    ctx.fillRect(0, 0, 1000, 250)
-                })
-                .catch(console.error)
+        if (userData?.backgroundImage)
+            await loadImage(userData.backgroundImage).then(drawBackground).catch(console.error)
 
         // Avatar
         const avatar = user.displayAvatarURL({ format: "png", dynamic: false, size: 512 })
-        await loadImage(avatar)
-            .then(avatar => {
-                ctx.strokeStyle = defaultColor
-                ctx.lineWidth = 10
-                ctx.beginPath()
-                ctx.moveTo(0, 0)
-                ctx.lineTo(0, 250)
-                ctx.lineTo(170, 250)
-                ctx.lineTo(250, 0)
-                ctx.closePath()
-                ctx.stroke()
-                ctx.save()
-                ctx.clip()
-                ctx.drawImage(avatar, -1, 0, 250, 250)
-                ctx.restore()
-            })
-            .catch(console.error)
+
+        const drawAvatar = (avatar: Image) => {
+            ctx.strokeStyle = accentColor
+            ctx.lineWidth = 10
+            ctx.beginPath()
+            ctx.moveTo(0, 0)
+            ctx.lineTo(0, 250)
+            ctx.lineTo(170, 250)
+            ctx.lineTo(250, 0)
+            ctx.closePath()
+            ctx.stroke()
+            ctx.save()
+            ctx.clip()
+            ctx.drawImage(avatar, -1, 0, 250, 250)
+            ctx.restore()
+        }
+
+        await loadImage(avatar).then(drawAvatar).catch(console.error)
 
         // Progress Bar
-        let x = 240
-        let y = 185
+        x = 240
+        y = 185
+        w = 45
+        h = 720
 
-        let w = 45
-        let h = 720
-
-        ctx.fillStyle = defaultBackgroundColor
-        ctx.strokeStyle = defaultBackgroundColor
+        ctx.fillStyle = strokeColor
+        ctx.strokeStyle = strokeColor
         ctx.beginPath()
         ctx.moveTo(x, y)
         ctx.bezierCurveTo(x - w / 2, y + w / 8, x - w / 2, y + w - w / 8, x, y + w)
@@ -103,16 +110,12 @@ export default new Command({
 
         h = 720 * (currentProgressXp / currentToNextLevelXp) //  actual progress
 
-        ctx.fillStyle = defaultColor
-        ctx.font = 'bold 32px "Arial"'
+        ctx.fillStyle = accentColor
+        ctx.font = 'bold 32px "Rubik"'
         ctx.textAlign = "center"
         ctx.lineWidth = 1
-        ctx.strokeStyle = "black"
-        let text = `${numberFormatter(levelData.xp)}/${numberFormatter(nextLevelXp)} XP`
-        ctx.strokeText(text, 600, 217, 700)
-        ctx.fillText(text, 600, 217, 700)
+        ctx.strokeStyle = strokeColor
 
-        ctx.fillStyle = defaultColor
         ctx.beginPath()
         ctx.moveTo(x, y)
         ctx.bezierCurveTo(x - w / 2, y + w / 8, x - w / 2, y + w - w / 8, x, y + w)
@@ -121,24 +124,40 @@ export default new Command({
         ctx.bezierCurveTo(x + w / 2, y + w - w / 8, x + w / 2, y + w / 8, x, y)
         ctx.closePath()
         ctx.fill()
-        ctx.save()
-        ctx.clip()
-        ctx.fillStyle = defaultBackgroundColor
-        ctx.font = 'bold 32px "Arial"'
-        ctx.textAlign = "center"
-        ctx.lineWidth = 1
-        ctx.fillText(text, 600, 217, 700)
-        ctx.strokeText(text, 600, 217, 700)
-        ctx.restore()
 
-        ctx.font = 'bold 48px "Arial"'
-        ctx.fillStyle = defaultColor
+        ctx.lineWidth = 2
+
+        // Username
+        x = 257
+        y = 120
+
+        ctx.font = 'bold 52px "Rubik"'
         ctx.textAlign = "left"
-        ctx.fillText(titleCase(user.tag.replace("!", "")), 255, 165, 700)
+        ctx.strokeText(user.tag.replace(/(( +)|!)/g, " ").trim(), x, y, l)
+        ctx.fillText(user.tag.replace(/(( +)|!)/g, " ").trim(), x, y, l)
 
-        ctx.font = 'bold 35px "Arial"'
+        ctx.globalAlpha = 0.8
+        ctx.font = 'bold 35px "Rubik"'
+
+        //  Level and rank
+        x = 255
+        y = 170
+
+        ctx.textAlign = "left"
+        ctx.strokeText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
+        ctx.fillText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
+
+        // XP count
+        x = 960
+        y = 170
+
         ctx.textAlign = "right"
-        ctx.fillText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, 960, 55, 700)
+
+        let text = `${numberFormatter(levelData.xp)} / ${numberFormatter(nextLevelXp)} XP`
+
+        ctx.lineWidth = 2
+        ctx.strokeText(text, x, y, l)
+        ctx.fillText(text, x, y, l)
 
         const files = [new MessageAttachment(canvas.toBuffer(), "Rank.png")]
 

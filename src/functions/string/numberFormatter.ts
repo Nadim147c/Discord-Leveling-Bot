@@ -16,5 +16,5 @@ export const numberFormatter = (num: number) => {
         if (num >= SI[i].value) break
     }
 
-    return (num / SI[i].value).toFixed(1).replace(regex, "$1") + SI[i].symbol
+    return (num / SI[i].value).toFixed(2).replace(regex, "$1") + SI[i].symbol
 }

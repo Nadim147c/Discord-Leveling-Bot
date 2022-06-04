@@ -5,38 +5,41 @@ import { getOrCreateUserData } from "../../functions/userDB/getData"
 import { Command } from "../../structures/Command"
 
 export default new Command({
-    name: "set-banner",
-    description: "Set a banner of your rank card.",
+    name: "set-background",
+    description: "Set a background image of your rank card.",
     options: [
         {
             type: "STRING",
             name: "url",
-            description: 'Banner must be a link or "reset" to reset the banner.',
+            description: "background image must be a link.",
             required: true,
         },
     ],
 
     async run(command) {
-        const bannerLink = command.options.getString("url")
+        const backgroundImageLink = command.options.getString("url")
 
         let userData = await getOrCreateUserData(command.user.id)
 
-        if (bannerLink == "reset") {
-            userData.banner = null
+        if (backgroundImageLink == "reset") {
+            userData.backgroundImage = null
             userData.save()
-            return followUp(command, "Your banner has been removed.")
+            return followUp(command, "Your backgroundImage has been removed.")
         }
 
         const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi
         const regex = new RegExp(expression)
 
-        if (!bannerLink.match(regex)) return followUp(command, "Invalid banner url.")
+        if (!backgroundImageLink.match(regex)) return followUp(command, "Invalid backgroundImage url.")
 
-        userData.banner = bannerLink
+        userData.backgroundImage = backgroundImageLink
         userData.save()
 
         const embeds = [
-            new MessageEmbed().setColor(color).setDescription("You banner has been changed.").setImage(bannerLink),
+            new MessageEmbed()
+                .setColor(color)
+                .setDescription("You backgroundImage has been changed.")
+                .setImage(backgroundImageLink),
         ]
 
         command.followUp({ embeds }).catch(console.error)

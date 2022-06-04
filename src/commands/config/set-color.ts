@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js"
+import { color } from "../../config"
 import { followUp } from "../../functions/message/message"
 import { colorSelector } from "../../functions/string/colorSelector"
 import { getOrCreateUserData } from "../../functions/userDB/getData"
@@ -10,34 +11,55 @@ export default new Command({
     options: [
         {
             type: "STRING",
-            name: "color",
+            name: "accent",
             description: "Name or hex code of a color.",
-            required: true,
+            required: false,
+        },
+        {
+            type: "STRING",
+            name: "stroke",
+            description: "Name or hex code of a color.",
+            required: false,
+        },
+        {
+            type: "STRING",
+            name: "background",
+            description: "Name or hex code of a color.",
+            required: false,
         },
     ],
+
     async run(command) {
-        const colorName = command.options.getString("color")
+        const accentColor = command.options.getString("accent")
+        const strokeColor = command.options.getString("stroke")
+        const backgroundColor = command.options.getString("background")
+
+        if (!accentColor && !strokeColor && !backgroundColor) return followUp(command, "No perimeter is found.")
 
         const userData = await getOrCreateUserData(command.user.id)
 
-        if (colorName === "reset") {
-            userData.color = null
-            userData.save()
-            return followUp(command, "Your color is removed.")
-        }
+        const accent = accentColor ? colorSelector(accentColor) : null
+        const stroke = strokeColor ? colorSelector(strokeColor) : null
+        const background = backgroundColor ? colorSelector(backgroundColor) : null
 
-        const color = colorSelector(colorName)
+        if (accent === "error") return followUp(command, "Invalid accent color.")
+        if (stroke === "error") return followUp(command, "Invalid stroke color.")
+        if (background === "error") return followUp(command, "Invalid background color.")
 
-        if (!color) return followUp(command, "Please give me a color name or hex code of a color.")
-
-        userData.color = color
+        if (accent) userData.color.accent = accent
+        if (stroke) userData.color.accent = stroke
+        if (background) userData.color.accent = background
         userData.save()
 
-        let embeds = [
+        const embeds = [
             new MessageEmbed()
-                .setDescription(`I have changed your color to:`)
                 .setColor(color)
-                .setThumbnail(`https://via.placeholder.com/20/${color.slice(1)}/${color.slice(1)}.png`),
+                .setTitle("Color Change")
+                .setDescription(
+                    `Accent Color: ${accent || "Unchanged"}
+                    Stroke Color: ${stroke || "Unchanged"}
+                    Background Color: ${background || "Unchanged"}`
+                ),
         ]
 
         return command.followUp({ embeds }).catch(console.error)
