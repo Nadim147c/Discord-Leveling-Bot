@@ -1,6 +1,7 @@
+import { Message } from "discord.js"
 import { getGuildData } from "../../functions/guildDB/getData"
 import { Confirmation } from "../../functions/message/confirmation"
-import { followUp } from "../../functions/message/message"
+import { edit, followUp } from "../../functions/message/message"
 import { LevelDB } from "../../models/levels"
 import { Command } from "../../structures/Command"
 
@@ -32,11 +33,12 @@ export default new Command({
             buttonName: "Just do it!",
             denyButton: true,
             denyButtonName: "Not Sure!",
-            successMessage: "Member level data has been deleted.",
         })
 
-        confirmation.start(async () => {
+        confirmation.start(async button => {
             await LevelDB.findOneAndDelete({ guildId: command.guild.id, userId: user.id })
+
+            edit(button.message as Message, "Member level data has been deleted.")
 
             const member = await command.guild.members.fetch(user.id)
 
