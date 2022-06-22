@@ -2,22 +2,11 @@ import { Message } from "discord.js"
 import { removeReward } from "../../functions/guildDB/reward"
 import { Confirmation } from "../../functions/message/confirmation"
 import { edit } from "../../functions/message/message"
-import { Command } from "../../structures/Command"
+import { SubCommand } from "../../structures/SubCommand"
 
-export default new Command({
-    name: "remove-reward",
-    description: "Remove already add levelup role of the server.",
-    options: [
-        {
-            type: "INTEGER",
-            name: "id",
-            description: "Id of the reward",
-            required: false,
-        },
-    ],
-    memberPermissions: ["MANAGE_ROLES"],
-    aliases: ["remove-levelup-role"],
-    async run(command) {
+export default new SubCommand({
+    name: "remove-role",
+    async callback(command) {
         const rewardId = command.options.getInteger("id")
 
         const confirmation = new Confirmation({

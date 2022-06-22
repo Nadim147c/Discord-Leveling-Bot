@@ -68,7 +68,7 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
     }
 
     try {
-        command.run(interaction)
+        command.callback(interaction)
     } catch (error) {
         console.log(error)
     }

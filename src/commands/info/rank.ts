@@ -8,6 +8,7 @@ import { createCanvas, Image, loadImage, registerFont } from "canvas"
 import { getXp } from "../../functions/levels/level"
 import { fitCover } from "../../functions/canvas/fitImage"
 import { numberFormatter } from "../../functions/string/numberFormatter"
+import { getContrast } from "../../functions/canvas/getContrast"
 
 export default new Command({
     name: "rank",
@@ -20,7 +21,7 @@ export default new Command({
         },
     ],
     aliases: ["level"],
-    async run(command) {
+    async callback(command) {
         let user = command.options.getUser("member") ?? command.user
 
         const levelData = (await getLevelData(user.id, command.guild.id, true).catch(console.error)) as LevelDataType
@@ -39,7 +40,7 @@ export default new Command({
         const accentColor = userData?.color?.accent || "#eee"
         const secondaryColor = "#223"
         const backgroundColor = userData?.color?.background || `#0f1925`
-        const strokeColor = userData?.color?.stroke || "#222"
+        const strokeColor = getContrast(accentColor) || "#222"
 
         const canvas = createCanvas(1000, 250)
         const ctx = canvas.getContext("2d")

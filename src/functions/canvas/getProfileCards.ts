@@ -2,7 +2,6 @@ import { createCanvas, Image, loadImage, registerFont } from "canvas"
 import { client } from "../.."
 import { LevelDataType } from "../../models/levels"
 import { numberFormatter } from "../string/numberFormatter"
-import { titleCase } from "../string/titleCase"
 
 export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
     const canvasArray = []
@@ -12,34 +11,31 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
 
         const user = await client.users.fetch(levelData.userId)
 
-        const freeSpace = 10
-
-        const canvas = createCanvas(800, 100)
+        const canvas = createCanvas(800, 90)
         const ctx = canvas.getContext("2d")
 
-        ctx.fillStyle = "#303443"
-        ctx.fillRect(0, 0, canvas.width, canvas.height - freeSpace)
+        ctx.fillStyle = "#333"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        const avatar =
-            user?.displayAvatarURL({ dynamic: false, format: "png" }) ||
-            "https://cdn.discordapp.com/embed/avatars/0.png"
+        const defaultAvatar = "https://cdn.discordapp.com/embed/avatars/0.png"
 
-        const loadAvatar = (avatar: Image) =>
-            ctx.drawImage(avatar, 0, 0, canvas.height - freeSpace, canvas.height - freeSpace)
+        const avatar = user?.displayAvatarURL({ dynamic: false, format: "png" }) || defaultAvatar
+
+        const loadAvatar = (avatar: Image) => ctx.drawImage(avatar, 0, 0, canvas.height, canvas.height)
 
         await loadImage(avatar).then(loadAvatar).catch(console.error)
 
-        registerFont("assets/fonts/ARIAL.TTF", { family: "Arial" })
+        registerFont("assets/fonts/Arial.ttf", { family: "Arial" })
 
         ctx.font = 'bold 38px "Arial"'
         ctx.fillStyle = "#eee"
         ctx.textAlign = "left"
-        ctx.fillText(
-            `${i + 1}. ${titleCase(user?.tag || "Unknown User#0000")} || Msg: ${numberFormatter(levelData.messages)}`,
-            canvas.height,
-            60,
-            700
-        )
+
+        const text = `${i + 1}. ${user?.username ?? "Unknown User"} : Msg: ${numberFormatter(
+            levelData.messages
+        )}`.replace(/ +/g, " ")
+
+        ctx.fillText(text, canvas.height + 10, 60, 700)
         canvasArray.push(canvas)
     }
 

@@ -5,7 +5,7 @@ import { Command } from "../../structures/Command"
 
 export default new Command({
     name: "set-levelup-message",
-    description: "Set a channel where you want to send message when members level up.",
+    description: "Set a message and channel when a member level up.",
     options: [
         {
             type: "STRING",
@@ -13,21 +13,32 @@ export default new Command({
             description: "Use %mention%, %nickname%, %username%, %tag%, %level% to set variables.",
             required: true,
         },
+        {
+            type: "CHANNEL",
+            name: "channel",
+            channelTypes: ["GUILD_NEWS", "GUILD_TEXT"],
+            description: "Channel must be a text channel.",
+            required: true,
+        },
     ],
     memberPermissions: ["MANAGE_CHANNELS", "MANAGE_MESSAGES"],
 
-    async run(command) {
+    async callback(command) {
+        const channel = command.options.getChannel("channel")
+
         let message = command.options.getString("message")
 
-        let guildData = await getOrCreateGuildData(command.guild.id)
+        const guildData = await getOrCreateGuildData(command.guild.id)
 
+        guildData.levelUpChannel = channel.id
         guildData.levelUpMessage = message
         guildData.save()
 
-        const { member } = command
+        message = replaceVariables(message, command.member, Math.round(Math.random() * 100))
 
-        message = replaceVariables(message, member, Math.round(Math.random() * 100))
-
-        followUp(command, `I will select send this message when someone reach new level.\nTest: ${message}`)
+        followUp(
+            command,
+            `I will select send this message to ${channel} channel when someone reach new level.\nTest: ${message}`
+        )
     },
 })

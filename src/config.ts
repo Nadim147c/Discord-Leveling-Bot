@@ -15,13 +15,13 @@ export const DEVs: string[] = ["759472423807746059", "835893902804254730"]
 // Your Server ID for bot to work
 export const devGuilds: string[] = ["970403357904736276"]
 
-export const delete_level_DB_on_guildDelete = false
+export const purge_DB_on_guildDelete = false
 
 // to detect spam
 export const spamConfig = { time: 3, amount: 3, delete: true, xp: 100 }
 
 // voiceleveling
-export const xpPerSecond = 1 / 7
+export const xpPerMin = 5
 
 // All required permission for bot.
 export const botPermissions: PermissionString[] = [

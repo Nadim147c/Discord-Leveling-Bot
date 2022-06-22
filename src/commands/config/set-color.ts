@@ -15,12 +15,7 @@ export default new Command({
             description: "Name or hex code of a color.",
             required: false,
         },
-        {
-            type: "STRING",
-            name: "stroke",
-            description: "Name or hex code of a color.",
-            required: false,
-        },
+
         {
             type: "STRING",
             name: "background",
@@ -29,26 +24,22 @@ export default new Command({
         },
     ],
 
-    async run(command) {
+    async callback(command) {
         const accentColor = command.options.getString("accent")
-        const strokeColor = command.options.getString("stroke")
         const backgroundColor = command.options.getString("background")
 
-        if (!accentColor && !strokeColor && !backgroundColor) return followUp(command, "No perimeter is found.")
+        if (!accentColor && !backgroundColor) return followUp(command, "No perimeter is found.")
 
         const userData = await getOrCreateUserData(command.user.id)
 
         const accent = accentColor ? colorSelector(accentColor) : null
-        const stroke = strokeColor ? colorSelector(strokeColor) : null
         const background = backgroundColor ? colorSelector(backgroundColor) : null
 
         if (accent === "error") return followUp(command, "Invalid accent color.")
-        if (stroke === "error") return followUp(command, "Invalid stroke color.")
         if (background === "error") return followUp(command, "Invalid background color.")
 
         if (accent) userData.color.accent = accent
-        if (stroke) userData.color.accent = stroke
-        if (background) userData.color.accent = background
+        if (background) userData.color.background = background
         userData.save()
 
         const embeds = [
@@ -57,7 +48,6 @@ export default new Command({
                 .setTitle("Color Change")
                 .setDescription(
                     `Accent Color: ${accent || "Unchanged"}
-                    Stroke Color: ${stroke || "Unchanged"}
                     Background Color: ${background || "Unchanged"}`
                 ),
         ]

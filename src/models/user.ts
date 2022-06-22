@@ -6,7 +6,6 @@ export interface UserDataType extends Document {
     userId: string
     color: {
         accent: string
-        stroke: string
         background: string
     }
     backgroundImage: string
@@ -16,7 +15,6 @@ const schema = new Schema({
     userId: STRING,
     color: {
         accent: String,
-        stroke: String,
         background: String,
     },
     backgroundImage: String,

@@ -17,7 +17,7 @@ export default new Command({
     ],
     memberPermissions: ["ADMINISTRATOR"],
 
-    async run(command) {
+    async callback(command) {
         const user = command.options.getUser("member")
 
         //  If mentioned member is a bot then bot will send this message

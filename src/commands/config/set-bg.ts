@@ -16,7 +16,7 @@ export default new Command({
         },
     ],
 
-    async run(command) {
+    async callback(command) {
         const backgroundImageLink = command.options.getString("url")
 
         let userData = await getOrCreateUserData(command.user.id)
@@ -27,8 +27,7 @@ export default new Command({
             return followUp(command, "Your backgroundImage has been removed.")
         }
 
-        const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi
-        const regex = new RegExp(expression)
+        const regex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi
 
         if (!backgroundImageLink.match(regex)) return followUp(command, "Invalid backgroundImage url.")
 

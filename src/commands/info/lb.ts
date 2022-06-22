@@ -11,7 +11,7 @@ export default new Command({
     name: "leaderboard",
     description: "Get the server leaderboard.",
     aliases: ["lb"],
-    async run(command) {
+    async callback(command) {
         const leaderboardArray = (await leaderboard(command.guild.id, 10).catch(console.error)) as LevelDataType[]
 
         if (!leaderboardArray.length)
@@ -19,10 +19,14 @@ export default new Command({
 
         const canvasArray = await getProfileCards(leaderboardArray)
 
-        const canvas = Canvas.createCanvas(800, 100 * canvasArray.length)
+        const freeSpace = 10
+
+        const canvas = Canvas.createCanvas(800, (90 + freeSpace) * canvasArray.length)
         const ctx = canvas.getContext("2d")
 
-        canvasArray.forEach((card, index) => ctx.drawImage(card, 0, card.height * index, 800, card.height))
+        canvasArray.forEach((card, index) =>
+            ctx.drawImage(card, 0, (card.height + freeSpace) * index, 800, card.height)
+        )
 
         const files = [new MessageAttachment(canvas.toBuffer(), "leaderboard.png")]
         const embeds = [new MessageEmbed().setColor(color).setImage("attachment://leaderboard.png")]

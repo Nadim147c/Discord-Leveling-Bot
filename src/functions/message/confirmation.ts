@@ -1,3 +1,4 @@
+import { error } from "console"
 import {
     ButtonInteraction,
     Collector,
@@ -25,8 +26,7 @@ type optionType = {
     input: Message | Interaction
     method: "send" | "followUp" | "reply" | "edit"
     timeOut?: number
-    successMessage?: string
-    denyMessage?: string
+    onDeny?: (interaction: ButtonInteraction) => any
     timeOutMessage?: string
 }
 
@@ -80,16 +80,9 @@ export class Confirmation {
 
             interaction.deferUpdate()
 
-            if (interaction.customId === "denied")
-                return edit(message, option.denyMessage || "Confirmation denied.") as any
+            if (interaction.customId !== "denied") return onConfirm(interaction as ButtonInteraction).catch(error)
 
-            if (option.successMessage) await edit(message, option.successMessage)
-
-            try {
-                onConfirm(interaction as ButtonInteraction)
-            } catch (error) {
-                console.log(error)
-            }
+            if (option.onDeny) option.onDeny(interaction as ButtonInteraction).catch(error)
         })
 
         collector.on("end", async (collection: Collection<string, MessageComponentInteraction>) => {
