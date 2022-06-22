@@ -2,21 +2,11 @@ import { Message } from "discord.js"
 import { removeBoost } from "../../functions/guildDB/boost"
 import { Confirmation } from "../../functions/message/confirmation"
 import { edit } from "../../functions/message/message"
-import { Command } from "../../structures/Command"
+import { SubCommand } from "../../structures/SubCommand"
 
-export default new Command({
-    name: "remove-xp-boost",
-    description: "Remove already added XP booster role of the server.",
-    options: [
-        {
-            type: "INTEGER",
-            name: "id",
-            description: "Id of the boost",
-            required: false,
-        },
-    ],
-    memberPermissions: ["MANAGE_ROLES"],
-    async run(command) {
+export default new SubCommand({
+    name: "remove-role",
+    async callback(command) {
         const boostId = command.options.getInteger("id")
 
         const confirmation = new Confirmation({

@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js"
+import { color } from "../../config"
 import { followUp } from "../../functions/message/message"
 import { colorSelector } from "../../functions/string/colorSelector"
 import { getOrCreateUserData } from "../../functions/userDB/getData"
@@ -10,34 +11,45 @@ export default new Command({
     options: [
         {
             type: "STRING",
-            name: "color",
+            name: "accent",
             description: "Name or hex code of a color.",
-            required: true,
+            required: false,
+        },
+
+        {
+            type: "STRING",
+            name: "background",
+            description: "Name or hex code of a color.",
+            required: false,
         },
     ],
-    async run(command) {
-        const colorName = command.options.getString("color")
+
+    async callback(command) {
+        const accentColor = command.options.getString("accent")
+        const backgroundColor = command.options.getString("background")
+
+        if (!accentColor && !backgroundColor) return followUp(command, "No perimeter is found.")
 
         const userData = await getOrCreateUserData(command.user.id)
 
-        if (colorName === "reset") {
-            userData.color = null
-            userData.save()
-            return followUp(command, "Your color is removed.")
-        }
+        const accent = accentColor ? colorSelector(accentColor) : null
+        const background = backgroundColor ? colorSelector(backgroundColor) : null
 
-        const color = colorSelector(colorName)
+        if (accent === "error") return followUp(command, "Invalid accent color.")
+        if (background === "error") return followUp(command, "Invalid background color.")
 
-        if (!color) return followUp(command, "Please give me a color name or hex code of a color.")
-
-        userData.color = color
+        if (accent) userData.color.accent = accent
+        if (background) userData.color.background = background
         userData.save()
 
-        let embeds = [
+        const embeds = [
             new MessageEmbed()
-                .setDescription(`I have changed your color to:`)
                 .setColor(color)
-                .setThumbnail(`https://via.placeholder.com/20/${color.slice(1)}/${color.slice(1)}.png`),
+                .setTitle("Color Change")
+                .setDescription(
+                    `Accent Color: ${accent || "Unchanged"}
+                    Background Color: ${background || "Unchanged"}`
+                ),
         ]
 
         return command.followUp({ embeds }).catch(console.error)

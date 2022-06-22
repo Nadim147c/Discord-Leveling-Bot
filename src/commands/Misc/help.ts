@@ -6,7 +6,7 @@ import { client } from "../.."
 export default new Command({
     name: "help",
     description: "Get list of command.",
-    async run(command) {
+    async callback(command) {
         const categories = [...new Set([...client.commands.values()].map(command => command.category))]
 
         const fields = categories.map(category => {

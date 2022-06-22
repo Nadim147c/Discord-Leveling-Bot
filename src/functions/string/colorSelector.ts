@@ -1,4 +1,4 @@
-export const colorSelector = (str: string) => {
+export const colorSelector = (str: string): string => {
     const colors = {
         aliceblue: "#f0f8ff",
         antiquewhite: "#faebd7",
@@ -51,7 +51,7 @@ export const colorSelector = (str: string) => {
         gold: "#ffd700",
         goldenrod: "#daa520",
         gray: "#808080",
-        green: "#008000",
+        green: "#00ff00",
         greenyellow: "#adff2f",
         honeydew: "#f0fff0",
         hotpink: "#ff69b4",
@@ -76,7 +76,7 @@ export const colorSelector = (str: string) => {
         lightslategray: "#778899",
         lightsteelblue: "#b0c4de",
         lightyellow: "#ffffe0",
-        lime: "#00ff00",
+        lime: "#C0FF00",
         limegreen: "#32cd32",
         linen: "#faf0e6",
         magenta: "#ff00ff",
@@ -151,5 +151,5 @@ export const colorSelector = (str: string) => {
 
     if (reg.test(str)) return str
 
-    return
+    return "error"
 }

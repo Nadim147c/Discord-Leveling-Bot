@@ -13,5 +13,10 @@ export type CommandType = {
     category?: string
     ephemeral?: boolean
     devOnly?: boolean
-    run: CommandFunction
+    callback: CommandFunction
 } & ChatInputApplicationCommandData
+
+export type SubCommandType = {
+    name: string
+    callback: CommandFunction
+}

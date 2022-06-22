@@ -1,8 +1,8 @@
-import { GuildMember } from "discord.js"
+import { GuildMember, Message } from "discord.js"
 import { getGuildData } from "../../functions/guildDB/getData"
 import { setLevel } from "../../functions/levels/level"
 import { Confirmation } from "../../functions/message/confirmation"
-import { followUp } from "../../functions/message/message"
+import { edit, followUp } from "../../functions/message/message"
 import { Command } from "../../structures/Command"
 
 export default new Command({
@@ -23,7 +23,7 @@ export default new Command({
         },
     ],
     memberPermissions: ["ADMINISTRATOR"],
-    async run(command) {
+    async callback(command) {
         const member = command.options.getMember("member") as GuildMember
         const { user } = member
         const level = command.options.getInteger("level")
@@ -42,13 +42,14 @@ export default new Command({
             buttonName: "Yeah",
             denyButton: true,
             denyButtonName: "No! Please don't!",
-            successMessage: `${user} now in level ${level}`,
         })
 
-        confirmation.start(async _ => {
+        confirmation.start(async button => {
             const { levelData } = await setLevel(user.id, command.guild.id, level)
 
-            const rewards = (await getGuildData(command.guild.id))?.rewards || []
+            edit(button.message as Message, `${user} now in level ${level}`)
+
+            const rewards = (await getGuildData(command.guild.id))?.rewards ?? []
 
             // To avoid unnecessary permission error logging in the console
             const ignoreError = () => null

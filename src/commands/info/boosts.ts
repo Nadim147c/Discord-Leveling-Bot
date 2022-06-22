@@ -7,7 +7,7 @@ import { Command } from "../../structures/Command"
 export default new Command({
     name: "boosts",
     description: "Get a list of get list of all the boosts roles.",
-    async run(command) {
+    async callback(command) {
         const { boosts } = await getOrCreateGuildData(command.guild.id)
 
         if (!boosts.length) return followUp(command, `Server doesn't have any rewards.`)

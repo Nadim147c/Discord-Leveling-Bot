@@ -7,7 +7,7 @@ import { Command } from "../../structures/Command"
 export default new Command({
     name: "rewards",
     description: "Get a list of roles will be given when you levelup.",
-    async run(command) {
+    async callback(command) {
         const { rewards } = await getOrCreateGuildData(command.guild.id)
 
         if (!rewards.length) return followUp(command, `Server doesn't have any rewards.`)

@@ -6,7 +6,7 @@ import { Command } from "../../structures/Command"
 export default new Command({
     name: "reload",
     description: "Reload all slash command in the server.",
-    async run(command) {
+    async callback(command) {
         const commands = Array.from(client.commands.values())
 
         //  Registering the slash commands in the server

@@ -19,9 +19,8 @@ export const followUp = async (
     interaction: CommandInteraction,
     content: string,
     time?: number,
-    color?: ColorResolvable
+    color: ColorResolvable = defaultColor
 ) => {
-    if (!color) color = defaultColor
     embeds = [new MessageEmbed().setDescription(content).setColor(color)]
     const message = (await interaction.followUp({ embeds }).catch(logError)) as Message
 
@@ -37,9 +36,8 @@ export const interactionReply = async (
     content: string,
     ephemeral?: boolean,
     time?: number,
-    color?: ColorResolvable
+    color: ColorResolvable = defaultColor
 ) => {
-    if (!color) color = defaultColor
     if (!ephemeral) ephemeral = false
     embeds = [new MessageEmbed().setDescription(content).setColor(color)]
     const message = (await interaction.reply({ embeds, ephemeral }).catch(logError)) as unknown as Message
@@ -56,7 +54,7 @@ export const messageReply = async (
     content: string,
     allowedMentions?: boolean,
     time?: number,
-    color?: ColorResolvable
+    color: ColorResolvable = defaultColor
 ) => {
     if (!color) color = defaultColor
     if (!allowedMentions) allowedMentions = false
@@ -76,9 +74,8 @@ export const send = async (
     channel: User | TextBasedChannel,
     content: string,
     time?: number,
-    color?: ColorResolvable
+    color: ColorResolvable = defaultColor
 ) => {
-    if (!color) color = defaultColor
     embeds = [new MessageEmbed().setDescription(content).setColor(color)]
     const message = (await channel.send({ embeds }).catch(logError)) as Message
 
@@ -89,8 +86,7 @@ export const send = async (
     return message
 }
 
-export const edit = async (message: Message, content: string, time?: number, color?: ColorResolvable) => {
-    if (!color) color = defaultColor
+export const edit = async (message: Message, content: string, time?: number, color: ColorResolvable = defaultColor) => {
     embeds = [new MessageEmbed().setDescription(content).setColor(color)]
     await message.edit({ embeds, content: " ", components: [], files: [] }).catch(logError)
 
