@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js"
 import { color } from "../../config"
-import { followUp } from "../../functions/message/message"
+import { followUp } from "../../functions/discord/message"
 import { colorSelector } from "../../functions/string/colorSelector"
 import { getOrCreateUserData } from "../../functions/userDB/getData"
 import { Command } from "../../structures/Command"
@@ -24,7 +24,7 @@ export default new Command({
         },
     ],
 
-    async callback(command) {
+    async execute(command) {
         const accentColor = command.options.getString("accent")
         const backgroundColor = command.options.getString("background")
 

@@ -1,4 +1,4 @@
-import { ActivitiesOptions, PermissionString } from "discord.js"
+import { PermissionString } from "discord.js"
 
 // Your Bot Token
 export const bot_token = process.env.TOKEN
@@ -10,10 +10,10 @@ export const mongodb_url = process.env.MONGODB
 export const color = 3092790
 
 // Developers account ID
-export const DEVs: string[] = ["759472423807746059", "835893902804254730"]
+export const developers: string[] = ["759472423807746059"]
 
 // Your Server ID for bot to work
-export const devGuilds: string[] = ["970403357904736276"]
+export const devGuild: string = "970403357904736276"
 
 export const purge_DB_on_guildDelete = false
 
@@ -21,7 +21,13 @@ export const purge_DB_on_guildDelete = false
 export const spamConfig = { time: 3, amount: 3, delete: true, xp: 100 }
 
 // voiceleveling
-export const xpPerMin = 5
+export const xpPerMin = 10
+
+// Xp per message
+export const messageXp = {
+    min: 5,
+    max: 20,
+}
 
 // All required permission for bot.
 export const botPermissions: PermissionString[] = [
@@ -31,20 +37,3 @@ export const botPermissions: PermissionString[] = [
     "MANAGE_MESSAGES",
     "MANAGE_ROLES",
 ]
-
-export const idle = 2 * 60 * 1000
-
-// Status
-export const status: { timeout: number; activities: ActivitiesOptions[] } = {
-    timeout: 1000 * 60 * 5, // 5min
-    activities: [
-        {
-            type: "WATCHING",
-            name: "Your Messages.",
-        },
-        {
-            type: "PLAYING",
-            name: "with you.",
-        },
-    ],
-}

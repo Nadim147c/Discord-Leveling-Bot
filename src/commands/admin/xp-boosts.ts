@@ -39,7 +39,7 @@ export default new Command({
         },
     ],
     memberPermissions: ["MANAGE_ROLES"],
-    async callback(command) {
+    async execute(command) {
         client.runSubCommand("boosts", command)
     },
 })

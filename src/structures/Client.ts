@@ -1,14 +1,17 @@
-import { Client, Collection, CommandInteraction, Interaction } from "discord.js"
+import { Client, Collection, CommandInteraction } from "discord.js"
 import { readdirSync } from "fs"
 import mongoose from "mongoose"
 import { bot_token, mongodb_url } from "../config"
-import { CommandType, ExtendedCommand, SubCommandType } from "../typings/commands"
+import { GuildDataType } from "../models/guild"
+import { categoryInfo, CommandType, ExtendedCommand, SubCommandType } from "../typings/commands"
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection()
+    commandsInfo: Collection<string, categoryInfo> = new Collection()
     subCommands: Collection<string, Collection<string, SubCommandType>> = new Collection()
     coolDown: Collection<string, Collection<string, number>> = new Collection()
     voiceTime: Collection<string, number> = new Collection()
+    guildData: Collection<string, GuildDataType> = new Collection()
 
     constructor() {
         super({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] })
@@ -21,7 +24,7 @@ export class ExtendedClient extends Client {
     }
 
     private async connectToDatabase(url: string) {
-        mongoose.connect(url).then(mongo => console.log(`Connected to MongoDB: ${mongo.modelNames().join(", ")}`))
+        mongoose.connect(url).then((mongo) => console.log(`Connected to MongoDB: ${mongo.modelNames().join(", ")}`))
     }
 
     async importFile(filePath: string) {
@@ -40,7 +43,7 @@ export class ExtendedClient extends Client {
         const commandFile = collection?.get(commandName)
 
         try {
-            commandFile?.callback(command as ExtendedCommand)
+            commandFile?.execute(command as ExtendedCommand)
         } catch (error) {
             console.error(error)
         }

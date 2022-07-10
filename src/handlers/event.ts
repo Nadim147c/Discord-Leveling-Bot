@@ -8,6 +8,6 @@ export default async (client: ExtendedClient) => {
     const events = readdirSync(`${__dirname}/../events`).filter(filter)
     for (let file of events) {
         const module: Event<keyof ClientEvents> = await client.importFile(`${__dirname}/../events/${file}`)
-        client.on(module.event, module.run)
+        client.on(module.event, module.execute)
     }
 }

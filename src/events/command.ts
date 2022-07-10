@@ -1,7 +1,7 @@
 import { Collection } from "discord.js"
 import { client } from ".."
-import { botPermissions, DEVs } from "../config"
-import { followUp, interactionReply } from "../functions/message/message"
+import { botPermissions, developers } from "../config"
+import { followUp, interactionReply } from "../functions/discord/message"
 import { titleCase } from "../functions/string/titleCase"
 import { Event } from "../structures/Event"
 import { ExtendedCommand } from "../typings/commands"
@@ -29,7 +29,7 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
         : await interaction.deferReply().catch(console.error)
 
     // Developer Check
-    if (command.devOnly && !DEVs.includes(user.id))
+    if (command.devOnly && !developers.includes(user.id))
         return followUp(interaction, "Your are not allowed to use this command", 8)
 
     // Cool Down Check
@@ -59,7 +59,7 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
 
     // Permission Check
     if (command.memberPermissions?.length) {
-        const permissions = command.memberPermissions.filter(x => !member.permissions.has(x))
+        const permissions = command.memberPermissions.filter((x) => !member.permissions.has(x))
 
         const permissionName = titleCase(permissions.join(", "))
 
@@ -68,7 +68,7 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
     }
 
     try {
-        command.callback(interaction)
+        command.execute(interaction)
     } catch (error) {
         console.log(error)
     }

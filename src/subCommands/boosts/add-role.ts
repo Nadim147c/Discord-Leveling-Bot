@@ -1,13 +1,13 @@
 import { Message, MessageEmbed } from "discord.js"
 import { color } from "../../config"
 import { addBoost } from "../../functions/guildDB/boost"
-import { Confirmation } from "../../functions/message/confirmation"
-import { followUp } from "../../functions/message/message"
+import { Confirmation } from "../../functions/discord/confirmation"
+import { followUp } from "../../functions/discord/message"
 import { SubCommand } from "../../structures/SubCommand"
 
 export default new SubCommand({
     name: "add-role",
-    async callback(command) {
+    async execute(command) {
         const role = command.options.getRole("role")
         const amount = command.options.getInteger("amount")
         if (amount > 100 || amount < 1) return followUp(command, `Amount must be between 1-100.`)
@@ -20,7 +20,7 @@ export default new SubCommand({
             denyButton: true,
             denyButtonName: "Never mind!",
         })
-        confirmation.start(async interaction => {
+        confirmation.start(async (interaction) => {
             const message = interaction.message as Message
             const { index } = await addBoost(command.guild.id, amount, role.id)
             const embeds = [

@@ -75,7 +75,7 @@ export class Confirmation {
         collector.on("collect", async (interaction: MessageComponentInteraction) => {
             if (interaction.user.id !== user.id) {
                 collector.collected.delete(interaction.id)
-                return interactionReply(interaction, `I didn't asked you!`, true)
+                return interactionReply(interaction, `I asked for ${user}'s confirmation.`, true)
             }
 
             interaction.deferUpdate()

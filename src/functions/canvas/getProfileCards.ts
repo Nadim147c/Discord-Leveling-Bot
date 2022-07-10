@@ -11,7 +11,7 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
 
         const user = await client.users.fetch(levelData.userId)
 
-        const canvas = createCanvas(800, 90)
+        const canvas = createCanvas(1000, 90)
         const ctx = canvas.getContext("2d")
 
         ctx.fillStyle = "#333"
@@ -31,11 +31,11 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
         ctx.fillStyle = "#eee"
         ctx.textAlign = "left"
 
-        const text = `${i + 1}. ${user?.username ?? "Unknown User"} : Msg: ${numberFormatter(
+        const text = `${i + 1}. ${user?.username ?? "Unknown User"} | Message: ${numberFormatter(
             levelData.messages
         )}`.replace(/ +/g, " ")
 
-        ctx.fillText(text, canvas.height + 10, 60, 700)
+        ctx.fillText(text, canvas.height + 10, 60, 900)
         canvasArray.push(canvas)
     }
 
