@@ -10,17 +10,10 @@ It is an advanced Discord leveling bot made with Discord.js and MongoDB. It is e
 -   Custom Leaderboard Image.
 -   Spam detection.
 -   Rewards on Level-up.
--   XP booster
+-   XP boosting.
 -   Set or Reset level
 -   Slash commands.
--   Voice leveling (coming soon.)
-
-### 📦 Dependencies
-
--   discord.js
--   canvas
--   mongoose
--   fs
+-   Voice leveling.
 
 #### 🔐 Environment Variables
 

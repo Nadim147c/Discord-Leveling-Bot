@@ -1,7 +1,9 @@
 import { Message } from "discord.js"
 import { getGuildData } from "../../functions/guildDB/getData"
+
 import { Confirmation } from "../../functions/discord/confirmation"
 import { edit, followUp } from "../../functions/discord/message"
+
 import { LevelDB } from "../../models/levels"
 import { Command } from "../../structures/Command"
 
@@ -39,7 +41,10 @@ export default new Command({
         })
 
         confirmation.start(async (interaction) => {
+
             await LevelDB.findOneAndDelete({ guildId: command.guild.id, userId: user.id })
+
+            edit(button.message as Message, "Member level data has been deleted.")
 
             const member = await command.guild.members.fetch(user.id)
 
