@@ -7,26 +7,19 @@ export const getOrCreateLevelData: funcType = async (userId, guildId, getRank) =
 
     data = data ? data : await LevelDB.create({ userId, guildId })
 
-    if (getRank) {
-        const lb: LevelDataType[] = await LevelDB.find({ guildId })
-            .sort([["xp", "descending"]])
-            .exec()
+    if (getRank)
+        data.rank =
+            (await LevelDB.find({ guildId }).sort({ xp: -1 }).exec()).findIndex((i) => i.userId === userId) + 1 ?? 0
 
-        data.rank = lb.findIndex(i => i.userId === userId) + 1
-    }
     return data
 }
 
 export const getLevelData: funcType = async (userId, guildId, getRank) => {
     const data: LevelDataType = await LevelDB.findOne({ userId, guildId })
 
-    if (getRank && data) {
-        const lb: LevelDataType[] = await LevelDB.find({ guildId })
-            .sort([["xp", "descending"]])
-            .exec()
-
-        data.rank = lb.findIndex(i => i.userId === userId) + 1
-    }
+    if (getRank && data)
+        data.rank =
+            (await LevelDB.find({ guildId }).sort({ xp: -1 }).exec()).findIndex((i) => i.userId === userId) + 1 ?? 0
 
     return data as LevelDataType
 }
