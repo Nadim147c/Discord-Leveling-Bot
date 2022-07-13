@@ -1,6 +1,6 @@
 import { Command } from "../../structures/Command"
-import { MessageAttachment } from "discord.js"
-import { followUp } from "../../functions/message/message"
+import { EmbedField, GuildMember, ImageURLOptions, MessageAttachment, MessageEmbed } from "discord.js"
+import { followUp } from "../../functions/discord/message"
 import { getLevelData } from "../../functions/levels/getData"
 import { LevelDataType } from "../../models/levels"
 import { getUserData } from "../../functions/userDB/getData"
@@ -9,9 +9,14 @@ import { getXp } from "../../functions/levels/level"
 import { fitCover } from "../../functions/canvas/fitImage"
 import { numberFormatter } from "../../functions/string/numberFormatter"
 import { getContrast } from "../../functions/canvas/getContrast"
+import { progressBar } from "../../functions/canvas/progressBar"
+import { color, messageXp, xpPerMin } from "../../config"
+import { getOrCreateGuildData } from "../../functions/guildDB/getData"
+import { timeFormatter } from "../../functions/string/timeFormatter"
+import { client } from "../.."
 
 export default new Command({
-    name: "rank",
+    name: "level",
     description: "Check level of someone.",
     options: [
         {
@@ -20,9 +25,10 @@ export default new Command({
             description: "Target member to check level.",
         },
     ],
-    aliases: ["level"],
-    async callback(command) {
-        let user = command.options.getUser("member") ?? command.user
+    aliases: ["rank"],
+    async execute(command) {
+        let member = (command.options.getMember("member") ?? command.member) as GuildMember
+        const { user } = member
 
         const levelData = (await getLevelData(user.id, command.guild.id, true).catch(console.error)) as LevelDataType
 
@@ -39,7 +45,7 @@ export default new Command({
 
         const accentColor = userData?.color?.accent || "#eee"
         const secondaryColor = "#223"
-        const backgroundColor = userData?.color?.background || `#0f1925`
+        const backgroundColor = userData?.color?.background || member.displayHexColor || `#0f1925`
         const strokeColor = getContrast(accentColor) || "#222"
 
         const canvas = createCanvas(1000, 250)
@@ -47,8 +53,6 @@ export default new Command({
 
         let x: number,
             y: number,
-            h: number,
-            w: number,
             l = 700
 
         registerFont("assets/fonts/Rubik.ttf", { family: "Rubik" })
@@ -65,12 +69,15 @@ export default new Command({
             ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
 
+        const imgURLOptions = { format: "png", dynamic: false, size: 1024 } as ImageURLOptions
+
+        const backgroundImageURL = user.banner ? user.bannerURL(imgURLOptions) : userData?.backgroundImage
+
         // Banner
-        if (userData?.backgroundImage)
-            await loadImage(userData.backgroundImage).then(drawBackground).catch(console.error)
+        if (backgroundImageURL) await loadImage(userData.backgroundImage).then(drawBackground).catch(console.error)
 
         // Avatar
-        const avatar = user.displayAvatarURL({ format: "png", dynamic: false, size: 512 })
+        const avatar = member.displayAvatarURL(imgURLOptions)
 
         const drawAvatar = (avatar: Image) => {
             ctx.strokeStyle = accentColor
@@ -93,49 +100,35 @@ export default new Command({
         // Progress Bar
         x = 240
         y = 185
-        w = 45
-        h = 720
 
-        ctx.fillStyle = strokeColor
-        ctx.strokeStyle = strokeColor
-        ctx.beginPath()
-        ctx.moveTo(x, y)
-        ctx.bezierCurveTo(x - w / 2, y + w / 8, x - w / 2, y + w - w / 8, x, y + w)
-        x += h
-        ctx.lineTo(x, y + w)
-        ctx.bezierCurveTo(x + w / 2, y + w - w / 8, x + w / 2, y + w / 8, x, y)
-        ctx.closePath()
-        ctx.fill()
-        ctx.stroke()
-        x -= h
+        await progressBar({
+            context: ctx,
+            maxXp: currentToNextLevelXp,
+            currentXp: currentProgressXp,
+            x,
+            y,
+            width: 720,
+            height: 50,
+            accent: accentColor,
+            background: strokeColor,
+        })
 
-        h = 720 * (currentProgressXp / currentToNextLevelXp) //  actual progress
-
+        ctx.lineWidth = 5
         ctx.fillStyle = accentColor
         ctx.font = 'bold 32px "Rubik"'
         ctx.textAlign = "center"
-        ctx.lineWidth = 1
         ctx.strokeStyle = strokeColor
-
-        ctx.beginPath()
-        ctx.moveTo(x, y)
-        ctx.bezierCurveTo(x - w / 2, y + w / 8, x - w / 2, y + w - w / 8, x, y + w)
-        x += h
-        ctx.lineTo(x, y + w)
-        ctx.bezierCurveTo(x + w / 2, y + w - w / 8, x + w / 2, y + w / 8, x, y)
-        ctx.closePath()
-        ctx.fill()
-
-        ctx.lineWidth = 2
 
         // Username
         x = 257
         y = 120
 
+        const name = member.displayName.replace(/(( +)|!)/g, " ").trim()
+
         ctx.font = 'bold 52px "Rubik"'
         ctx.textAlign = "left"
-        ctx.strokeText(user.tag.replace(/(( +)|!)/g, " ").trim(), x, y, l)
-        ctx.fillText(user.tag.replace(/(( +)|!)/g, " ").trim(), x, y, l)
+        ctx.strokeText(name, x, y, l)
+        ctx.fillText(name, x, y, l)
 
         ctx.globalAlpha = 0.8
         ctx.font = 'bold 35px "Rubik"'
@@ -144,7 +137,6 @@ export default new Command({
         x = 255
         y = 170
 
-        ctx.textAlign = "left"
         ctx.strokeText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
         ctx.fillText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
 
@@ -156,12 +148,61 @@ export default new Command({
 
         let text = `${numberFormatter(levelData.xp)} / ${numberFormatter(nextLevelXp)} XP`
 
-        ctx.lineWidth = 2
         ctx.strokeText(text, x, y, l)
         ctx.fillText(text, x, y, l)
 
-        const files = [new MessageAttachment(canvas.toBuffer(), "Rank.png")]
+        const files = [new MessageAttachment(canvas.toBuffer(), "rank.png")]
 
-        command.followUp({ files }).catch(console.error)
+        // Embed
+        const guildData = await getOrCreateGuildData(command.guildId)
+        const xp = numberFormatter(levelData.xp)
+        const boosts =
+            guildData.boosts.filter((x) => member.roles.cache.has(x.roleId)).reduce((a, v) => a + v.amount, 0) + "%"
+
+        const roles =
+            guildData.rewards
+                .filter((x) => member.roles.cache.has(x.roleId))
+                .map((x) => `<@&${x.roleId}>`)
+                .join(", ") || "none"
+
+        const requiredXp = numberFormatter(nextLevelXp - levelData.xp)
+        const requiredMsg = numberFormatter(
+            Math.round((nextLevelXp - levelData.xp) / ((messageXp.max + messageXp.min) / 2))
+        )
+        const requiredVoiceTime = timeFormatter(((nextLevelXp - levelData.xp) / xpPerMin) * 60)
+
+        const fields: EmbedField[] = [
+            {
+                name: "Achievements:",
+                value: `Rank: ${levelData.level}\nRoles: ${roles}`,
+                inline: true,
+            },
+            {
+                name: "Activities:",
+                value: `Messages: ${numberFormatter(levelData.messages)}\nLast Activity: <t:${
+                    levelData.lastUpdate.valueOf() / 1000
+                }:R>`,
+                inline: true,
+            },
+            {
+                name: "Requirement for next level || Level: 26",
+                value: `XP: ${requiredXp}\nAverage Messages: ${requiredMsg}\nAverage Voice Time: ${requiredVoiceTime}`,
+                inline: false,
+            },
+        ]
+
+        const embeds = [
+            new MessageEmbed()
+                .setColor(color)
+                .setAuthor({ name: client.user.username, iconURL: client.user.avatarURL(imgURLOptions) })
+                .setTitle(`${member.displayName}'s XP`)
+                .setThumbnail(member.displayAvatarURL({ size: 1024 }))
+                .setDescription(`XP: ${xp}\nLevel: ${levelData.level}\nXP Boost: ${boosts}`)
+                .addFields(...fields)
+                .setImage("attachment://rank.png")
+                .setTimestamp(),
+        ]
+
+        command.followUp({ files, embeds }).catch(console.error)
     },
 })

@@ -1,12 +1,12 @@
 import { Message } from "discord.js"
 import { removeBoost } from "../../functions/guildDB/boost"
-import { Confirmation } from "../../functions/message/confirmation"
-import { edit } from "../../functions/message/message"
+import { Confirmation } from "../../functions/discord/confirmation"
+import { edit } from "../../functions/discord/message"
 import { SubCommand } from "../../structures/SubCommand"
 
 export default new SubCommand({
     name: "remove-role",
-    async callback(command) {
+    async execute(command) {
         const boostId = command.options.getInteger("id")
 
         const confirmation = new Confirmation({
@@ -21,7 +21,7 @@ export default new SubCommand({
             denyButtonName: "Nope",
         })
 
-        confirmation.start(async interaction => {
+        confirmation.start(async (interaction) => {
             const message = interaction.message as Message
             const { boosts } = await removeBoost(command.guild.id, boostId)
 

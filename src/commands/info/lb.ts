@@ -5,13 +5,13 @@ import { leaderboard } from "../../functions/levels/leaderBoard"
 import { color } from "../../config"
 import { LevelDataType } from "../../models/levels"
 import { getProfileCards } from "../../functions/canvas/getProfileCards"
-import { followUp } from "../../functions/message/message"
+import { followUp } from "../../functions/discord/message"
 
 export default new Command({
     name: "leaderboard",
     description: "Get the server leaderboard.",
     aliases: ["lb"],
-    async callback(command) {
+    async execute(command) {
         const leaderboardArray = (await leaderboard(command.guild.id, 10).catch(console.error)) as LevelDataType[]
 
         if (!leaderboardArray.length)
@@ -21,11 +21,11 @@ export default new Command({
 
         const freeSpace = 10
 
-        const canvas = Canvas.createCanvas(800, (90 + freeSpace) * canvasArray.length)
+        const canvas = Canvas.createCanvas(1000, (90 + freeSpace) * canvasArray.length)
         const ctx = canvas.getContext("2d")
 
         canvasArray.forEach((card, index) =>
-            ctx.drawImage(card, 0, (card.height + freeSpace) * index, 800, card.height)
+            ctx.drawImage(card, 0, (card.height + freeSpace) * index, 1000, card.height)
         )
 
         const files = [new MessageAttachment(canvas.toBuffer(), "leaderboard.png")]

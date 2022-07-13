@@ -1,8 +1,8 @@
 import { GuildMember, Message } from "discord.js"
 import { getGuildData } from "../../functions/guildDB/getData"
 import { setLevel } from "../../functions/levels/level"
-import { Confirmation } from "../../functions/message/confirmation"
-import { edit, followUp } from "../../functions/message/message"
+import { Confirmation } from "../../functions/discord/confirmation"
+import { edit, followUp } from "../../functions/discord/message"
 import { Command } from "../../structures/Command"
 
 export default new Command({
@@ -23,7 +23,7 @@ export default new Command({
         },
     ],
     memberPermissions: ["ADMINISTRATOR"],
-    async callback(command) {
+    async execute(command) {
         const member = command.options.getMember("member") as GuildMember
         const { user } = member
         const level = command.options.getInteger("level")
@@ -44,7 +44,7 @@ export default new Command({
             denyButtonName: "No! Please don't!",
         })
 
-        confirmation.start(async button => {
+        confirmation.start(async (button) => {
             const { levelData } = await setLevel(user.id, command.guild.id, level)
 
             edit(button.message as Message, `${user} now in level ${level}`)
@@ -55,13 +55,13 @@ export default new Command({
             const ignoreError = () => null
 
             //  removing role
-            rewards.forEach(reward => {
+            rewards.forEach((reward) => {
                 if (reward.level > levelData.level && member.roles.cache.has(reward.roleId))
                     member.roles.remove(reward.roleId).catch(ignoreError)
             })
 
             //  adding role
-            rewards.forEach(reward => {
+            rewards.forEach((reward) => {
                 if (reward.level <= levelData.level) member.roles.add(reward.roleId).catch(ignoreError)
             })
         })

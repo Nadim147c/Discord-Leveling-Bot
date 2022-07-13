@@ -1,7 +1,8 @@
+import { messageXp } from "../../config"
 import { getOrCreateLevelData } from "./getData"
 
 export const getRandomXp = (min?: number, max?: number) =>
-    Math.round(Math.random() * ((max || 20) - (min || 5))) + (min || 5)
+    Math.round(Math.random() * ((max ?? messageXp.max) - (min ?? messageXp.min))) + (min ?? messageXp.min)
 
 export const addXp = async (userId: string, guildId: string, xpAmount: number) => {
     const levelData = await getOrCreateLevelData(userId, guildId)

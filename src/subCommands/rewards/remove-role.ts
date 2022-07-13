@@ -1,12 +1,12 @@
 import { Message } from "discord.js"
 import { removeReward } from "../../functions/guildDB/reward"
-import { Confirmation } from "../../functions/message/confirmation"
-import { edit } from "../../functions/message/message"
+import { Confirmation } from "../../functions/discord/confirmation"
+import { edit } from "../../functions/discord/message"
 import { SubCommand } from "../../structures/SubCommand"
 
 export default new SubCommand({
     name: "remove-role",
-    async callback(command) {
+    async execute(command) {
         const rewardId = command.options.getInteger("id")
 
         const confirmation = new Confirmation({
@@ -21,7 +21,7 @@ export default new SubCommand({
             denyButtonName: "Nope",
         })
 
-        confirmation.start(async interaction => {
+        confirmation.start(async (interaction) => {
             const message = interaction.message as Message
             const { rewards } = await removeReward(command.guild.id, rewardId)
 

@@ -1,4 +1,5 @@
 import { getOrCreateGuildData } from "./getData"
+import { saveGuildData } from "./savaData"
 
 export const addReward = async (guildId: string, level: number, roleId: string) => {
     const guildData = await getOrCreateGuildData(guildId)
@@ -6,7 +7,7 @@ export const addReward = async (guildId: string, level: number, roleId: string) 
     let index = guildData.rewards.length
 
     guildData.rewards.push({ roleId, level })
-    guildData.save()
+    await saveGuildData(guildData)
 
     const rewards = guildData.rewards[0]
     return { guildData, index, rewards }
@@ -18,12 +19,12 @@ export const removeReward = async (guildId: string, index?: number) => {
     if (index) {
         const rewards = guildData.rewards.filter((_, i) => i === index)
         guildData.rewards = guildData.rewards.filter((_, i) => i !== index)
-        guildData.save()
+        await saveGuildData(guildData)
         return { guildData, rewards }
     }
 
     const { rewards } = guildData
     guildData.rewards = []
-    guildData.save()
+    await saveGuildData(guildData)
     return { guildData, rewards }
 }

@@ -7,8 +7,9 @@ import { addXp } from "../functions/levels/xp"
 import { Event } from "../structures/Event"
 
 export default new Event("voiceStateUpdate", async (oldState: VoiceState, newState: VoiceState) => {
+    if (!oldState.member.user.bot) return
     const userId = oldState.member.user.id ?? newState.member.user.id
-    const sleep = (delay: number) => new Promise(resolve => setTimeout(resolve, delay))
+    const sleep = (delay: number) => new Promise((resolve) => setTimeout(resolve, delay))
 
     if (!oldState.channelId && newState.channelId) await sleep(2000)
 
@@ -35,7 +36,7 @@ export default new Event("voiceStateUpdate", async (oldState: VoiceState, newSta
     const guildData = await getOrCreateGuildData(oldState.guild.id)
 
     // Adding boosts if member has those roles
-    guildData.boosts.forEach(boost => {
+    guildData.boosts.forEach((boost) => {
         if (oldState.member.roles.cache.has(boost.roleId)) xp += xp * (boost.amount / 100)
     })
 

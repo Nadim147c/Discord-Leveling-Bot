@@ -6,7 +6,7 @@ import { Collection } from "discord.js"
 export default (client: ExtendedClient) => {
     const filter = (file: string) => file.endsWith(".ts") || file.endsWith(".js")
 
-    const path = `${__dirname}/../subCommands/`
+    const path = `${__dirname}/../subCommands`
     readdirSync(path).forEach(async (dir: string) => {
         const commandFiles = readdirSync(`${path}/${dir}`).filter(filter)
 

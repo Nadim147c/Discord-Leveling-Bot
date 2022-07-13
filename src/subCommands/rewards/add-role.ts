@@ -1,12 +1,12 @@
 import { Message, MessageEmbed } from "discord.js"
 import { color } from "../../config"
 import { addReward } from "../../functions/guildDB/reward"
-import { Confirmation } from "../../functions/message/confirmation"
+import { Confirmation } from "../../functions/discord/confirmation"
 import { SubCommand } from "../../structures/SubCommand"
 
 export default new SubCommand({
     name: "add-role",
-    async callback(command) {
+    async execute(command) {
         const role = command.options.getRole("role")
         const level = command.options.getInteger("level")
 
@@ -20,7 +20,7 @@ export default new SubCommand({
             denyButtonName: "Nope",
         })
 
-        confirmation.start(async interaction => {
+        confirmation.start(async (interaction) => {
             const message = interaction.message as Message
             const { index } = await addReward(command.guild.id, level, role.id)
             const embeds = [

@@ -10,13 +10,19 @@ export type CommandType = {
     memberPermissions?: PermissionString[]
     aliases?: string[]
     coolDown?: number
-    category?: string
     ephemeral?: boolean
     devOnly?: boolean
-    callback: CommandFunction
+    execute: CommandFunction
 } & ChatInputApplicationCommandData
 
 export type SubCommandType = {
     name: string
-    callback: CommandFunction
+    execute: CommandFunction
+}
+
+export type categoryInfo = {
+    isConfig: true
+    name: string
+    emoji: string
+    commands: string[]
 }
