@@ -151,5 +151,5 @@ export const colorSelector = (str: string): string => {
 
     if (reg.test(str)) return str
 
-    return "error"
+    return
 }

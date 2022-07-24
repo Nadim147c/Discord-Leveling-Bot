@@ -8,16 +8,20 @@ export type BoostsType = { roleId: string; amount: number }
 
 export interface GuildDataType extends Document {
     guildId: string
-    levelUpChannel?: string
-    levelUpMessage?: string
+    levelup: {
+        channelId: string
+        message: string
+    }
     rewards: RewardsType[]
     boosts: BoostsType[]
 }
 
 const userSchema = new Schema({
     guildId: STRING,
-    levelUpChannel: String,
-    levelUpMessage: String,
+    levelup: {
+        channelId: String,
+        message: String,
+    },
     rewards: { type: [{ level: NUMBER, roleId: STRING }], default: [] },
     boosts: { type: [{ amount: NUMBER, roleId: STRING }], default: [] },
 })

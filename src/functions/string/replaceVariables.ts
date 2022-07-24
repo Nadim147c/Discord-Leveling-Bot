@@ -1,13 +1,18 @@
 import { GuildMember } from "discord.js"
+import { LevelDataType } from "../../models/levels"
 
-export const replaceVariables = (str: string, member: GuildMember, level: number) => {
+export const replaceVariables = (str: string, member: GuildMember, levelData: LevelDataType) => {
     const char = {
         mention: `${member}`,
         nickname: `${member.displayName}`,
         username: `${member.user.username}`,
-        tag: `${member.user.tag}`,
-        level: `${level}`,
+        user_tag: `${member.user.tag}`,
+        user_level: `${levelData.level}`,
+        user_xp: `${levelData.xp}`,
     }
-    
-    return str.replace(/%(mention|nickname|username|tag|level)%/gi, (word: string) => char[word.replace(/%/g, "")])
+
+    return str.replace(
+        /(MENTION|NICKNAME|USERNAME|USER_TAG|USER_LEVEL|USER_XP)/g,
+        (word: string) => char[word.toLowerCase()],
+    )
 }

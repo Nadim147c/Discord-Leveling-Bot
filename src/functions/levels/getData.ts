@@ -3,9 +3,8 @@ import { LevelDataType, LevelDB } from "../../models/levels"
 type funcType = (userId: string, guildId: string, getRank?: boolean) => Promise<LevelDataType>
 
 export const getOrCreateLevelData: funcType = async (userId, guildId, getRank) => {
-    let data: LevelDataType = await LevelDB.findOne({ userId, guildId })
-
-    data = data ? data : await LevelDB.create({ userId, guildId })
+    let data: LevelDataType =
+        (await LevelDB.findOne({ userId, guildId })) ?? (await LevelDB.create({ userId, guildId }))
 
     if (getRank)
         data.rank =

@@ -6,18 +6,26 @@ export interface UserDataType extends Document {
     userId: string
     color: {
         accent: string
-        background: string
+        font: string
     }
-    backgroundImage: string
+    background: {
+        color: string
+        image: string
+    }
+    levelup_alert: Boolean
 }
 
 const schema = new Schema({
     userId: STRING,
     color: {
         accent: String,
-        background: String,
+        font: String,
     },
-    backgroundImage: String,
+    background: {
+        color: String,
+        image: String,
+    },
+    levelup_alert: Boolean,
 })
 
 export const UserDB = model("UserDB", schema, "Users")

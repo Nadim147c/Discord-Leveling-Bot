@@ -4,7 +4,7 @@ import { botPermissions, developers } from "../config"
 import { followUp, interactionReply } from "../functions/discord/message"
 import { titleCase } from "../functions/string/titleCase"
 import { Event } from "../structures/Event"
-import { ExtendedCommand } from "../typings/commands"
+import { ExtendedCommand } from "../typings/Commands"
 
 export default new Event("interactionCreate", async (interaction: ExtendedCommand) => {
     if (!interaction.isCommand()) return
@@ -33,13 +33,13 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
         return followUp(interaction, "Your are not allowed to use this command", 8)
 
     // Cool Down Check
-    const { coolDown } = client
+    const { timeout: coolDown } = client
 
     if (!coolDown.has(command.name)) coolDown.set(command.name, new Collection())
 
     const CurrentTime = Date.now()
     const timestamps = coolDown.get(command.name)
-    const coolDownAmount = (command.coolDown || 3) * 1000
+    const coolDownAmount = (command.timeout || 3) * 1000
 
     if (timestamps.has(user.id)) {
         const expirationTime = timestamps.get(user.id) + coolDownAmount
@@ -48,7 +48,7 @@ export default new Event("interactionCreate", async (interaction: ExtendedComman
             const timeLeft = (expirationTime - CurrentTime) / 1000
             return followUp(
                 interaction,
-                `Wait **${timeLeft.toFixed(1)}**s before reusing the \`${command.name}\` command.`
+                `Wait **${timeLeft.toFixed(1)}**s before reusing the \`${command.name}\` command.`,
             )
         }
     }

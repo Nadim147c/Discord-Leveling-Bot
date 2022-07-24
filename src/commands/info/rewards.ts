@@ -3,6 +3,8 @@ import { color } from "../../config"
 import { getOrCreateGuildData } from "../../functions/guildDB/getData"
 import { followUp } from "../../functions/discord/message"
 import { Command } from "../../structures/Command"
+import { getAuthor, getFooter } from "../../functions/discord/embed"
+import { client } from "../.."
 
 export default new Command({
     name: "rewards",
@@ -18,7 +20,15 @@ export default new Command({
             .map((role) => `Level **${role.level}** ⸺ <@&${role.roleId}>`)
             .join("\n")
 
-        const embeds = [new MessageEmbed().setTitle("Level Up Rewards:").setDescription(roles).setColor(color)]
+        const embeds = [
+            new MessageEmbed()
+                .setColor(color)
+                .setTitle("Levelup Rewards Roles")
+                .setDescription(roles)
+                .setAuthor(getAuthor(client.user))
+                .setFooter(getFooter(command.user))
+                .setTimestamp(),
+        ]
 
         command.followUp({ embeds }).catch(console.error)
     },
