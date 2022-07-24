@@ -12,13 +12,13 @@ export default new Button({
     async run(button, command) {
         const modalData = new Modal()
             .setCustomId("bg-image")
-            .setTitle("Background Image.")
+            .setTitle("Set Background Image")
             .setComponents(
                 new MessageActionRow({
                     components: [
                         new TextInputComponent()
                             .setLabel("Give me the URL of od the image.")
-                            .setCustomId("color")
+                            .setCustomId("image")
                             .setPlaceholder("An image URL.")
                             .setStyle("SHORT")
                             .setRequired(true),
@@ -32,7 +32,7 @@ export default new Button({
 
         if (!modal) return timeOut("NOREPLY", { interaction: command })
 
-        const url = modal.fields.getTextInputValue("color")
+        const url = modal.fields.getTextInputValue("image")
 
         await modal.deferUpdate()
 

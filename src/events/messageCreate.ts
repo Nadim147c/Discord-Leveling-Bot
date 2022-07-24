@@ -3,15 +3,17 @@ import { addXp, getRandomXp } from "../functions/levels/xp"
 import { levelUp as levelUpFunction } from "../functions/levels/levelup"
 import { Event } from "../structures/Event"
 import { client } from ".."
+import { getOrCreateUserData } from "../functions/userDB/getData"
+import { messageCoolDown } from "../config"
 
 export default new Event("messageCreate", async (message) => {
     if (!message.guild || message.author.bot) return
 
-    const previousTime = client.coolDown.get(message.author.id) ?? 0
+    const previousTime = client.coolDown.get(message.author.id) ?? Infinity
 
     const currentTime = new Date().valueOf()
 
-    if (previousTime - currentTime < 60000) {
+    if (previousTime - currentTime < messageCoolDown) {
         client.coolDown.set(message.author.id, currentTime)
         return
     }
@@ -28,6 +30,7 @@ export default new Event("messageCreate", async (message) => {
     })
 
     const { levelData, levelUp } = await addXp(message.author.id, message.guild.id, xp)
+    const userData = await getOrCreateUserData(message.author.id)
 
-    if (levelUp) await levelUpFunction(message.member, levelData, guildData)
+    if (levelUp) await levelUpFunction(message.member, levelData, guildData, userData)
 })

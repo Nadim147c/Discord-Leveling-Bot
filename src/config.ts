@@ -18,8 +18,8 @@ export const devGuild: string = "970403357904736276"
 // Purge database on guild delete event/when bot is kicked from server
 export const freeSpace = false
 
-// to detect spam
-export const spamConfig = { time: 3, amount: 3, delete: true, xp: 100 }
+// Message Cool Down
+export const messageCoolDown = 1000 * 2
 
 // voice leveling
 export const xpPerMin = 10

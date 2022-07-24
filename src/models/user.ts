@@ -12,7 +12,7 @@ export interface UserDataType extends Document {
         color: string
         image: string
     }
-    levelup_alert: Boolean
+    levelup_mention: Boolean
 }
 
 const schema = new Schema({
@@ -25,7 +25,7 @@ const schema = new Schema({
         color: String,
         image: String,
     },
-    levelup_alert: Boolean,
+    levelup_mention: Boolean,
 })
 
 export const UserDB = model("UserDB", schema, "Users")

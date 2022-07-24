@@ -3,37 +3,30 @@ import { client } from "../.."
 import { color } from "../../config"
 import { createButton } from "../../functions/discord/createButton"
 import { getAuthor, getFooter } from "../../functions/discord/embed"
+import { interactionReply } from "../../functions/discord/message"
+import { titleCase } from "../../functions/string/titleCase"
 import { getOrCreateUserData } from "../../functions/userDB/getData"
 import { Button } from "../../structures/Button"
 
 export default new Button({
-    id: "remove-bg",
+    id: ["remove-bg-color", "remove-bg-image"],
     async run(button, command) {
-        button.deferUpdate()
         const userData = await getOrCreateUserData(command.user.id)
 
-        delete userData.background
+        let type: string
+        switch (button.customId) {
+            case "remove-bg-color":
+                type = "color"
+                userData.background.color = null
+                break
+            case "remove-bg-image":
+                type = "image"
+                userData.background.image = null
+                break
+        }
 
         userData.save()
 
-        const embeds = [
-            new MessageEmbed()
-                .setColor(color)
-                .setTitle("Remove Background")
-                .setDescription(`Background has been removed.`)
-                .setAuthor(getAuthor(client.user))
-                .setFooter(getFooter(button.user))
-                .setTimestamp(),
-        ]
-
-        const disableServerSettings = button.member.permissions.has("ADMINISTRATOR") ? false : true
-        const components = [
-            new MessageActionRow().setComponents(
-                createButton("Profile Settings", "profile-settings"),
-                createButton("Server Settings", "guild-settings", "SECONDARY", disableServerSettings),
-            ),
-        ]
-
-        await command.editReply({ embeds, components }).catch(console.error)
+        await interactionReply(button, `Background ${type} has been removed.`, true)
     },
 })

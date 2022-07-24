@@ -11,7 +11,14 @@ export default (client: ExtendedClient) => {
 
         for (const file of buttonFiles) {
             const button: ButtonType = await client.importFile(`${path}/${dir}/${file}`)
+
             if (!button.id) return
+
+            if (Array.isArray(button.id)) {
+                button.id.forEach((id) => client.buttons.set(id, button))
+                continue
+            }
+
             client.buttons.set(button.id, button)
         }
     })

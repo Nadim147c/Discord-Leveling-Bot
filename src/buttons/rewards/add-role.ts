@@ -17,7 +17,7 @@ export default new Button({
         let roles = button.guild.roles.cache.filter(filter)
 
         if (button.user.id !== button.guild.ownerId)
-            roles = roles.filter((role) => role.comparePositionTo(button.member.roles.highest) > 0)
+            roles = roles.filter((role) => role.comparePositionTo(button.member.roles.highest) < 0)
 
         const options: MessageSelectOptionData[] = roles.map(getSelectOptionsFormRole)
 
