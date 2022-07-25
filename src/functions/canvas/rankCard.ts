@@ -83,10 +83,6 @@ export const getCard = async (member: GuildMember, levelData: LevelDataType, use
     const canvas = createCanvas(1000, 250)
     const ctx = canvas.getContext("2d")
 
-    let x: number,
-        y: number,
-        l = 700
-
     registerFont("assets/fonts/Rubik.ttf", { family: "Rubik" })
 
     ctx.fillStyle = backgroundColor
@@ -102,10 +98,25 @@ export const getCard = async (member: GuildMember, levelData: LevelDataType, use
     }
 
     const imgURLOptions = { format: "png", dynamic: false, size: 1024 } as ImageURLOptions
-    const backgroundImageURL = user.banner ? user.bannerURL(imgURLOptions) : userData?.background?.image
 
     // Banner
+    const backgroundImageURL = userData?.background?.image ?? (user.banner ? user.bannerURL(imgURLOptions) : null)
     if (backgroundImageURL) await loadImage(userData?.background?.image).then(drawBackground).catch(console.error)
+
+    // Progress Bar
+    let x = 240
+    let y = 185
+
+    await progressBar({
+        context: ctx,
+        progress: currentProgressXp / currentToNextLevelXp,
+        x,
+        y,
+        width: 720,
+        height: 50,
+        accent: accentColor,
+        background: strokeColor,
+    })
 
     // Avatar
     const avatar = member.displayAvatarURL(imgURLOptions)
@@ -126,21 +137,6 @@ export const getCard = async (member: GuildMember, levelData: LevelDataType, use
     }
 
     await loadImage(avatar).then(drawAvatar).catch(console.error)
-
-    // Progress Bar
-    x = 240
-    y = 185
-    await progressBar({
-        context: ctx,
-        maxXp: currentToNextLevelXp,
-        currentXp: currentProgressXp,
-        x,
-        y,
-        width: 720,
-        height: 50,
-        accent: accentColor,
-        background: strokeColor,
-    })
 
     ctx.lineWidth = 5
     ctx.fillStyle = accentColor

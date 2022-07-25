@@ -9,6 +9,7 @@ import { Event } from "../structures/Event"
 
 export default new Event("voiceStateUpdate", async (oldState: VoiceState, newState: VoiceState) => {
     if (oldState.member.user.bot) return
+
     const userId = oldState.member.user.id ?? newState.member.user.id
 
     const sleep = (delay: number) => new Promise((resolve) => setTimeout(resolve, delay))

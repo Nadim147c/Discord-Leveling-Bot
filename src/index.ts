@@ -1,5 +1,7 @@
+import { createCanvas } from "canvas"
 import { config } from "dotenv"
 import { writeFileSync } from "fs"
+import { progressBar } from "./functions/canvas/progressBar"
 import { startServer } from "./server"
 
 config()

@@ -33,8 +33,6 @@ export const getSelectOptionsFormChannel = (channel: TextChannel | NewsChannel |
 export const getSelectOptionsFormRole = (role: Role) => {
     const { black, blue, green, red, white, noColor } = emojis.roles
 
-    console.log(role.color)
-
     let hex = role.hexColor as string
     let emoji: string
 

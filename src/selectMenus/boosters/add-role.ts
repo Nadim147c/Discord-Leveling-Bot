@@ -23,7 +23,7 @@ export default new SelectMenu({
                         new TextInputComponent()
                             .setLabel("Amount of XP you want boost.(In percentage)")
                             .setCustomId("amount")
-                            .setPlaceholder("The amount must an integer between 1-100.")
+                            .setPlaceholder("The amount must an integer.")
                             .setMaxLength(3)
                             .setMinLength(1)
                             .setStyle("SHORT")
@@ -39,10 +39,9 @@ export default new SelectMenu({
         if (!modal) return timeOut("NOREPLY", { interaction: command })
 
         const value = modal.fields.getTextInputValue("amount").match(/[0-9]+/)[0]
-        if (!value) return interactionReply(modal, `The amount must an integer between 1-100.`)
+        if (!value) return interactionReply(modal, `The amount must an integer.`)
 
         const amount = parseInt(value)
-        if (amount < 1 && amount > 100) return interactionReply(modal, `The amount must an integer between 1-100.`)
 
         modal.deferUpdate()
 

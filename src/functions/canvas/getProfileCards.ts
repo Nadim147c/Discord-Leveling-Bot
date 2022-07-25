@@ -20,7 +20,7 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
 
         const defaultAvatar = "https://cdn.discordapp.com/embed/avatars/0.png"
 
-        const avatar = user?.displayAvatarURL({ dynamic: false, format: "png" }) || defaultAvatar
+        const avatar = user?.displayAvatarURL({ dynamic: false, format: "png" }) ?? defaultAvatar
 
         const loadAvatar = (avatar: Image) => ctx.drawImage(avatar, 0, 0, canvas.height, canvas.height)
 

@@ -2,18 +2,18 @@
 
 It is an advanced Discord leveling bot made with Discord.js and MongoDB. It is easy to use and customize. It has all the necessary features other popular bots have.
 
-⚠ This code may have some bug and I will change a lot of things in the future.
-
 ### 🧰 Features
 
 -   Customizable rank-card.
--   Custom Leaderboard Image.
--   Spam detection.
+-   Leaderboard Image.
+-   Message Cool Down.
 -   Rewards on Level-up.
--   XP boosting.
--   Set or Reset level
+-   XP booster role.
+-   Set level.
 -   Slash commands.
 -   Voice leveling.
+-   No XP channel. (Coming soon)
+-   No XP role. (Coming soon)
 
 #### 🔐 Environment Variables
 

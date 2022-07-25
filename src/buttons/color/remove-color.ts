@@ -1,12 +1,12 @@
+import { MessageActionRow } from "discord.js"
 import { interactionReply } from "../../functions/discord/message"
+import { toggleComponents } from "../../functions/discord/toggleComponents"
 import { getOrCreateUserData } from "../../functions/userDB/getData"
 import { Button } from "../../structures/Button"
 
 export default new Button({
     id: ["remove-accent-color", "remove-font-color"],
     async run(button, command) {
-        button.deferUpdate()
-
         const userData = await getOrCreateUserData(command.user.id)
 
         let type: string
@@ -24,6 +24,9 @@ export default new Button({
 
         userData.save()
 
+        const components = toggleComponents(button.message.components as MessageActionRow[], true, button.customId)
+
         await interactionReply(button, `${type} color has been removed.`, true)
+        await command.editReply({ components }).catch(console.error)
     },
 })

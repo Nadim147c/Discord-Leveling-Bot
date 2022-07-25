@@ -22,7 +22,7 @@ export default new SelectMenu({
                         new TextInputComponent()
                             .setLabel("Which level do you want to give this role?")
                             .setCustomId("level")
-                            .setPlaceholder("The level must an integer between 1-100.")
+                            .setPlaceholder("The level must an integer.")
                             .setMaxLength(3)
                             .setMinLength(0)
                             .setStyle("SHORT")
@@ -38,10 +38,9 @@ export default new SelectMenu({
         if (!modal) return timeOut("NOREPLY", { interaction: command })
 
         const value = modal.fields.getTextInputValue("level").match(/[0-9]+/)[0]
-        if (!value) return interactionReply(modal, `The level must an integer between 1-100.`)
+        if (!value) return interactionReply(modal, `The level must an integer.`)
 
         const level = parseInt(value)
-        if (level < 1 && level > 100) return interactionReply(modal, `The level must an integer between 1-100.`)
 
         modal.deferUpdate()
 
