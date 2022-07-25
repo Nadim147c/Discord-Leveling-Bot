@@ -9,16 +9,18 @@ import { messageCoolDown } from "../config"
 export default new Event("messageCreate", async (message) => {
     if (!message.guild || message.author.bot) return
 
-    const previousTime = client.coolDown.get(message.author.id) ?? Infinity
+    const previousTime = client.coolDown.get(message.author.id) ?? 0
 
     const currentTime = new Date().valueOf()
 
-    if (previousTime - currentTime < messageCoolDown) {
+    if (currentTime - previousTime < messageCoolDown) {
         client.coolDown.set(message.author.id, currentTime)
+        setTimeout(() => client.coolDown.delete(message.author.id), messageCoolDown)
         return
     }
 
     client.coolDown.set(message.author.id, currentTime)
+    setTimeout(() => client.coolDown.delete(message.author.id), messageCoolDown)
 
     let xp = getRandomXp()
 
@@ -29,7 +31,7 @@ export default new Event("messageCreate", async (message) => {
         if (message.member.roles.cache.has(boost.roleId)) xp += xp * (boost.amount / 100)
     })
 
-    const { levelData, levelUp } = await addXp(message.author.id, message.guild.id, xp)
+    const { levelData, levelUp } = await addXp(message.author.id, message.guild.id, xp, "TEXT")
     const userData = await getOrCreateUserData(message.author.id)
 
     if (levelUp) await levelUpFunction(message.member, levelData, guildData, userData)

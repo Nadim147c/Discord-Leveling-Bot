@@ -56,6 +56,7 @@ export default new SelectMenu({
                         message,
                         select.member,
                         levelData,
+                        true,
                     )}`,
                 )
                 .setAuthor(getAuthor(client.user))

@@ -1,7 +1,6 @@
 import { MessageActionRow, MessageEmbed, MessageSelectOptionData, Role } from "discord.js"
 import { client } from "../.."
 import { color } from "../../config"
-import { createButton } from "../../functions/discord/createButton"
 import { createSelectMenu } from "../../functions/discord/createSelectMenu"
 import { getAuthor, getFooter } from "../../functions/discord/embed"
 import { getSelectOptionsFormRole } from "../../functions/discord/getSelectOptions"

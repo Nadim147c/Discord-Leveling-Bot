@@ -1,4 +1,5 @@
 import { createCanvas, Image, loadImage, registerFont } from "canvas"
+import { fillText, strokeText } from "canvas-emojicdn"
 import { EmbedField, GuildMember, ImageURLOptions, MessageAttachment, MessageEmbed } from "discord.js"
 import { client } from "../.."
 import { color, messageXp, xpPerMin } from "../../config"
@@ -74,9 +75,9 @@ export const getCard = async (member: GuildMember, levelData: LevelDataType, use
     const currentProgressXp = levelData.xp - CurrentLevelXp
     const currentToNextLevelXp = nextLevelXp - CurrentLevelXp
 
-    const accentColor = userData?.color.accent || "#eee"
+    const accentColor = userData?.color.accent || member.displayHexColor || "#eee"
     const secondaryColor = "#223"
-    const backgroundColor = userData.background.color || member.displayHexColor || `#0f1925`
+    const backgroundColor = userData.background.color || member.user.hexAccentColor || `#0f1925`
 
     const strokeColor = getContrast(accentColor) || "#222"
     const canvas = createCanvas(1000, 250)
@@ -151,26 +152,27 @@ export const getCard = async (member: GuildMember, levelData: LevelDataType, use
     x = 257
     y = 120
     const name = member.displayName.replace(/(( +)|!)/g, " ").trim()
-    ctx.font = 'bold 52px "Rubik"'
+    ctx.font = 'bold 48px "Rubik"'
     ctx.textAlign = "left"
-    ctx.strokeText(name, x, y, l)
-    ctx.fillText(name, x, y, l)
+    await strokeText(ctx, name, x, y, "twitter")
+    await fillText(ctx, name, x, y, "twitter")
     ctx.globalAlpha = 0.8
     ctx.font = 'bold 35px "Rubik"'
 
     //  Level and rank
     x = 255
     y = 170
-    ctx.strokeText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
-    ctx.fillText(`Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`, x, y, l)
+    let levelAndRankText = `Level: ${levelData.level || 0}   Rank: ${levelData.rank || 0}`
+    ctx.strokeText(levelAndRankText, x, y)
+    ctx.fillText(levelAndRankText, x, y)
 
     // XP count
     x = 960
     y = 170
     ctx.textAlign = "right"
-    let text = `${numberFormatter(levelData.xp)} / ${numberFormatter(nextLevelXp)} XP`
-    ctx.strokeText(text, x, y, l)
-    ctx.fillText(text, x, y, l)
+    let xpText = `${numberFormatter(levelData.xp)} / ${numberFormatter(nextLevelXp)} XP`
+    ctx.strokeText(xpText, x, y)
+    ctx.fillText(xpText, x, y)
 
     return [new MessageAttachment(canvas.toBuffer(), "rank.png")]
 }

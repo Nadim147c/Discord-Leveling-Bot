@@ -13,13 +13,13 @@ export const levelUp = async (
 ) => {
     if (guildData.levelup?.channelId) {
         let content = guildData.levelup.message
-        content = replaceVariables(content, member, levelData)
+        content = replaceVariables(content, member, levelData, userData.levelup_mention)
 
-        const channel = (await client.channels.fetch(guildData.levelup.channelId)) as TextBasedChannel
+        const channel = (await client.channels
+            .fetch(guildData.levelup.channelId)
+            .catch(console.error)) as TextBasedChannel
 
-        const users = userData.levelup_mention ? [userData.id] : []
-
-        if (channel) channel.send({ content, allowedMentions: { users } }).catch(console.error)
+        if (channel) channel.send({ content }).catch(console.error)
     }
 
     const NoError = () => {} //  To avoid unnecessary permission error log

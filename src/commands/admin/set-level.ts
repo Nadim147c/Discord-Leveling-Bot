@@ -1,7 +1,7 @@
 import { ButtonInteraction, GuildMember, Message, MessageActionRow, MessageEmbed } from "discord.js"
 import { getGuildData } from "../../functions/guildDB/getData"
 import { setLevel } from "../../functions/levels/level"
-import { edit, followUp } from "../../functions/discord/message"
+import { followUp } from "../../functions/discord/message"
 import { Command } from "../../structures/Command"
 import { createButton } from "../../functions/discord/createButton"
 import { getAuthor, getFooter } from "../../functions/discord/embed"
@@ -64,7 +64,9 @@ export default new Command({
             .awaitMessageComponent({ time: idleTime })
             .catch(console.error)) as ButtonInteraction
 
-        if (!button) return
+        if (!button) return timeOut("TIMEOUT", { interaction: command })
+
+        button.deferUpdate()
 
         if (button.customId === "deny") return timeOut("DENY", { interaction: command })
 
@@ -88,6 +90,6 @@ export default new Command({
             if (reward.level <= levelData.level) member.roles.add(reward.roleId).catch(ignoreError)
         })
 
-        command.editReply({ embeds }).catch(console.error)
+        command.editReply({ embeds, components: [] }).catch(console.error)
     },
 })

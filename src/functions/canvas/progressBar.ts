@@ -29,12 +29,11 @@ export const progressBar = async ({ context, maxXp, currentXp, x, y, width, heig
     ctx.bezierCurveTo(width, height, width, 0, width - roundness, 0)
     ctx.closePath()
 
-    // To retore later
+    // To restore later
     ctx.save()
     ctx.clip()
 
     ctx.lineWidth = strokeWidth
-    ctx.isPointInStroke
     ctx.fillStyle = background
     ctx.strokeStyle = background
     ctx.fill()

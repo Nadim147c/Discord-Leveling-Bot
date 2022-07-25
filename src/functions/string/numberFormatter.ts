@@ -1,4 +1,5 @@
 export const numberFormatter = (num: number) => {
+    if (num < 1) return num
     const SI = [
         { value: 1e18, symbol: "E" },
         { value: 1e15, symbol: "P" },

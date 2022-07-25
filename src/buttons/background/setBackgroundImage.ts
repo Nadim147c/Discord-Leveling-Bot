@@ -30,6 +30,7 @@ export default new Button({
 
         const modal = await button.awaitModalSubmit({ time: modalTime }).catch(console.error)
 
+        console.log(modal)
         if (!modal) return timeOut("NOREPLY", { interaction: command })
 
         const url = modal.fields.getTextInputValue("image")

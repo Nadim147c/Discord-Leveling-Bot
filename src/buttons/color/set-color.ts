@@ -1,4 +1,10 @@
-import { MessageActionRow, MessageEmbed, Modal, TextInputComponent } from "discord.js"
+import {
+    MessageActionRow,
+    MessageEmbed,
+    Modal,
+    ModalMessageModalSubmitInteraction,
+    TextInputComponent,
+} from "discord.js"
 import { client } from "../.."
 import { color, emojis, modalTime } from "../../config"
 import { createButton } from "../../functions/discord/createButton"
@@ -23,7 +29,7 @@ export default new Button({
         }
 
         const modalData = new Modal()
-            .setCustomId("color")
+            .setCustomId("set-color")
             .setTitle(title)
             .setComponents(
                 new MessageActionRow({
@@ -41,13 +47,13 @@ export default new Button({
 
         button.showModal(modalData)
 
-        const modal = await button.awaitModalSubmit({ time: modalTime }).catch(console.error)
+        const modal = (await button
+            .awaitModalSubmit({ time: modalTime })
+            .catch(console.error)) as ModalMessageModalSubmitInteraction
 
         if (!modal) return timeOut("NOREPLY", { interaction: command })
 
-        const regex = /^#([0-9a-f]{3}){1,2}$/i // color hex (#123 || #112233)
-
-        const colorHex = colorSelector(modal.fields.getTextInputValue("color").match(regex)?.[0] || "")
+        const colorHex = colorSelector(modal.fields.getTextInputValue("color") || "")
 
         if (!colorHex)
             return interactionReply(modal, `${emojis.general.error} Color name or hex value is invalid.`, true)

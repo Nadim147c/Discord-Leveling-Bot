@@ -19,7 +19,7 @@ export const devGuild: string = "970403357904736276"
 export const freeSpace = false
 
 // Message Cool Down
-export const messageCoolDown = 1000 * 2
+export const messageCoolDown = 1000 * 20
 
 // voice leveling
 export const xpPerMin = 10

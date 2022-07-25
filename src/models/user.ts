@@ -12,7 +12,7 @@ export interface UserDataType extends Document {
         color: string
         image: string
     }
-    levelup_mention: Boolean
+    levelup_mention: boolean
 }
 
 const schema = new Schema({
