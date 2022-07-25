@@ -2,16 +2,24 @@ import { GuildMember, TextBasedChannel } from "discord.js"
 import { client } from "../.."
 import { GuildDataType } from "../../models/guild"
 import { LevelDataType } from "../../models/levels"
-import { send } from "../discord/message"
+import { UserDataType } from "../../models/user"
 import { replaceVariables } from "../string/replaceVariables"
 
-export const levelUp = async (member: GuildMember, levelData: LevelDataType, guildData: GuildDataType) => {
-    if (guildData.levelUpChannel) {
-        let message = guildData.levelUpMessage || `${member} reached level **${levelData.level}**`
-        message = replaceVariables(message, member, levelData.level)
+export const levelUp = async (
+    member: GuildMember,
+    levelData: LevelDataType,
+    guildData: GuildDataType,
+    userData: UserDataType,
+) => {
+    if (guildData.levelup?.channelId) {
+        let content = guildData.levelup.message
+        content = replaceVariables(content, member, levelData, userData.levelup_mention)
 
-        const channel = (await client.channels.fetch(guildData.levelUpChannel)) as TextBasedChannel
-        send(channel, message)
+        const channel = (await client.channels
+            .fetch(guildData.levelup.channelId)
+            .catch(console.error)) as TextBasedChannel
+
+        if (channel) channel.send({ content }).catch(console.error)
     }
 
     const NoError = () => {} //  To avoid unnecessary permission error log

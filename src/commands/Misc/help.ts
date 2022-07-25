@@ -11,7 +11,6 @@ import {
 import { color } from "../../config"
 import { client } from "../.."
 import { interactionReply } from "../../functions/discord/message"
-import { titleCase } from "../../functions/string/titleCase"
 import { disableComponents } from "../../functions/discord/disableComponents"
 
 export default new Command({
@@ -31,7 +30,7 @@ export default new Command({
                 .setColor(color)
                 .setTitle(client.user.username)
                 .setDescription(
-                    "This is a leveling bot. Member will get a random amount XP when they chat. Members will get XP both text and voice chat."
+                    "This is a leveling bot. Member will get a random amount XP when they chat. Members will get XP both text and voice chat.",
                 )
                 .setFields(...fields),
         ]
@@ -46,10 +45,10 @@ export default new Command({
         let components = [
             new MessageActionRow().addComponents(
                 new MessageSelectMenu()
-                    .setCustomId("help-commmand")
+                    .setCustomId("help-command")
                     .setMaxValues(1)
                     .setPlaceholder("Get more info about commands of each category.")
-                    .setOptions(...options)
+                    .setOptions(...options),
             ),
         ]
 
@@ -65,7 +64,7 @@ export default new Command({
                 return interactionReply(
                     interaction,
                     `This command is called by ${command.user}. Use \`/help\` to get more info.`,
-                    true
+                    true,
                 )
             }
             interaction.deferUpdate()
@@ -77,11 +76,6 @@ export default new Command({
                 const cmd = client.commands.get(commandName)
 
                 let value = cmd.description
-
-                if (cmd.memberPermissions?.length) {
-                    const permissionNames = titleCase(cmd.memberPermissions.join(", "))
-                    value += `\n> Required Permissions: ${permissionNames}`
-                }
 
                 if (cmd.aliases?.length) {
                     const aliases = cmd.aliases.join(", ")

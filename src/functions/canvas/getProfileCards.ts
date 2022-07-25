@@ -1,4 +1,5 @@
 import { createCanvas, Image, loadImage, registerFont } from "canvas"
+import { fillText } from "canvas-emojicdn"
 import { client } from "../.."
 import { LevelDataType } from "../../models/levels"
 import { numberFormatter } from "../string/numberFormatter"
@@ -19,7 +20,7 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
 
         const defaultAvatar = "https://cdn.discordapp.com/embed/avatars/0.png"
 
-        const avatar = user?.displayAvatarURL({ dynamic: false, format: "png" }) || defaultAvatar
+        const avatar = user?.displayAvatarURL({ dynamic: false, format: "png" }) ?? defaultAvatar
 
         const loadAvatar = (avatar: Image) => ctx.drawImage(avatar, 0, 0, canvas.height, canvas.height)
 
@@ -32,10 +33,10 @@ export const getProfileCards = async (levelDataArray: LevelDataType[]) => {
         ctx.textAlign = "left"
 
         const text = `${i + 1}. ${user?.username ?? "Unknown User"} | Message: ${numberFormatter(
-            levelData.messages
+            levelData.messages,
         )}`.replace(/ +/g, " ")
 
-        ctx.fillText(text, canvas.height + 10, 60, 900)
+        await fillText(ctx, text, canvas.height + 10, 60, "twitter")
         canvasArray.push(canvas)
     }
 

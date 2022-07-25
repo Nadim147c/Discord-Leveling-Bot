@@ -2,8 +2,7 @@ import { Canvas, createCanvas } from "canvas"
 
 type option = {
     context: CanvasRenderingContext2D
-    maxXp: number
-    currentXp: number
+    progress: number
     x: number
     y: number
     width: number
@@ -12,9 +11,7 @@ type option = {
     background: string
 }
 
-export const progressBar = async ({ context, maxXp, currentXp, x, y, width, height, accent, background }: option) => {
-    if (currentXp > maxXp) currentXp = maxXp
-    if (currentXp < 0) currentXp = 0
+export const progressBar = async ({ context, progress, x, y, width, height, accent, background }: option) => {
     const roundness = 30
     const strokeWidth = 15
 
@@ -29,18 +26,16 @@ export const progressBar = async ({ context, maxXp, currentXp, x, y, width, heig
     ctx.bezierCurveTo(width, height, width, 0, width - roundness, 0)
     ctx.closePath()
 
-    // To retore later
+    // To restore later
     ctx.save()
     ctx.clip()
 
     ctx.lineWidth = strokeWidth
-    ctx.isPointInStroke
     ctx.fillStyle = background
     ctx.strokeStyle = background
     ctx.fill()
     ctx.stroke()
 
-    let progress = currentXp / maxXp
     if (progress + 0.05 < 1) progress += 0.05
 
     // the progress

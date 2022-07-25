@@ -13,5 +13,9 @@ export const getOrCreateGuildData: funcType = async (guildId) => {
     return data
 }
 
-export const getGuildData: funcType = async (guildId) =>
-    client.guildData.get(guildId) ?? (await GuildDB.findOne({ guildId }))
+export const getGuildData: funcType = async (guildId) => {
+    let guildData = client.guildData.get(guildId)
+    if (!guildData) guildData = await GuildDB.findOne({ guildId })
+    if (guildData) client.guildData.set(guildId, guildData)
+    return guildData
+}

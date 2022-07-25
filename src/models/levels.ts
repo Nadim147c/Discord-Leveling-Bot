@@ -8,9 +8,13 @@ export interface LevelDataType extends Document {
     userId: string
     guildId: string
     xp: number
+    textXp: number
+    voiceXp: number
     level: number
     messages: number
     lastUpdate: Date
+    lastText: Date
+    lastVoice: Date
     rank?: number
 }
 
@@ -18,9 +22,13 @@ const schema = new Schema({
     userId: STRING,
     guildId: STRING,
     xp: NUMBER,
+    textXp: NUMBER,
+    voiceXp: NUMBER,
     level: NUMBER,
     messages: NUMBER,
     lastUpdate: DATE,
+    lastText: DATE,
+    lastVoice: DATE,
 })
 
 export const LevelDB = model("levels", schema, "Levels")

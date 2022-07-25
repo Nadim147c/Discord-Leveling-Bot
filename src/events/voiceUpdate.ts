@@ -4,11 +4,14 @@ import { xpPerMin } from "../config"
 import { getOrCreateGuildData } from "../functions/guildDB/getData"
 import { levelUp } from "../functions/levels/levelup"
 import { addXp } from "../functions/levels/xp"
+import { getOrCreateUserData } from "../functions/userDB/getData"
 import { Event } from "../structures/Event"
 
 export default new Event("voiceStateUpdate", async (oldState: VoiceState, newState: VoiceState) => {
-    if (!oldState.member.user.bot) return
+    if (oldState.member.user.bot) return
+
     const userId = oldState.member.user.id ?? newState.member.user.id
+
     const sleep = (delay: number) => new Promise((resolve) => setTimeout(resolve, delay))
 
     if (!oldState.channelId && newState.channelId) await sleep(2000)
@@ -42,7 +45,9 @@ export default new Event("voiceStateUpdate", async (oldState: VoiceState, newSta
 
     xp = Math.round(xp)
 
-    const { levelData, levelUp: bol } = await addXp(userId, guildId, xp)
+    const { levelData, levelUp: leveledUp } = await addXp(userId, guildId, xp, "VOICE")
 
-    if (bol) return levelUp(oldState.member, levelData, guildData)
+    const userData = await getOrCreateUserData(userId)
+
+    if (leveledUp) return levelUp(oldState.member, levelData, guildData, userData)
 })

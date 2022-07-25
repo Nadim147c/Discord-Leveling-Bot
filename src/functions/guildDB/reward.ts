@@ -1,30 +1,30 @@
+import { RewardsType } from "../../models/guild"
 import { getOrCreateGuildData } from "./getData"
 import { saveGuildData } from "./savaData"
 
 export const addReward = async (guildId: string, level: number, roleId: string) => {
     const guildData = await getOrCreateGuildData(guildId)
 
-    let index = guildData.rewards.length
+    const rewards = { roleId, level }
 
-    guildData.rewards.push({ roleId, level })
+    guildData.rewards.push(rewards)
+
     await saveGuildData(guildData)
 
-    const rewards = guildData.rewards[0]
-    return { guildData, index, rewards }
-}
-
-export const removeReward = async (guildId: string, index?: number) => {
-    const guildData = await getOrCreateGuildData(guildId)
-
-    if (index) {
-        const rewards = guildData.rewards.filter((_, i) => i === index)
-        guildData.rewards = guildData.rewards.filter((_, i) => i !== index)
-        await saveGuildData(guildData)
-        return { guildData, rewards }
-    }
-
-    const { rewards } = guildData
-    guildData.rewards = []
-    await saveGuildData(guildData)
     return { guildData, rewards }
 }
+
+export const removeRewards = async (guildId: string, indexes: number[]) => {
+    const guildData = await getOrCreateGuildData(guildId)
+
+    const removed: RewardsType[] = indexes.reduce((a, v) => [...a, ...guildData.rewards.splice(v, 1)], [])
+
+    const rewards = guildData.rewards
+
+    await saveGuildData(guildData)
+
+    return { guildData, rewards, removed }
+}
+
+export const getRewards = async (guildId: string) =>
+    (await getOrCreateGuildData(guildId)).rewards.sort((a, b) => a.level - b.level)
