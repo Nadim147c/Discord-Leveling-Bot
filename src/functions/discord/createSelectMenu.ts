@@ -20,7 +20,7 @@ export const createSelectMenu = (
                 .setOptions(...options.slice(...range)),
         )
 
-        if (options.length < (i + 1) * 25) break
+        if (options.length <= (i + 1) * 25) break
     }
 
     return components
