@@ -23,7 +23,11 @@ export const getEmbeds = (member: GuildMember, levelData: LevelDataType, guildDa
     const filter = (reward: RewardsType | BoostsType) => member.roles.cache.has(reward.roleId)
 
     const boosts = guildData.boosts.filter(filter).reduce((a, v) => a + v.amount, 0) + "%"
-    const roles = [...new Set(...guildData.rewards.filter(filter).map((x) => `<@&${x.roleId}>`))].join(", ") || "❌"
+    const roles =
+        guildData.rewards
+            .filter(filter)
+            .map((x) => `<@&${x.roleId}>`)
+            .join(", ") || "❌"
 
     const requiredXp = numberFormatter(nextLevelXp - levelData.xp)
 
